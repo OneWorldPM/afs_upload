@@ -1,4 +1,4 @@
-<title>COS ePoster and Presentation Submission Site</title>
+<title>AFS Congress Presentations</title>
 
 <div class="content" style="padding: unset;">
     <div class="container">
@@ -15,7 +15,7 @@
                     <div class="col-md-8">
                         <div class="mb-4">
                             <h3>Sign in to the</h3>
-                            <h4><strong>COS ePoster and Presentation Submission Site</strong></h4>
+                            <h4><strong>AFS Congress Presentations</strong></h4>
                             <p class="mb-4">Username is your registered email and default password is your first name (password is case sensitive)</p>
                         </div>
                         <form action="#" method="post">
