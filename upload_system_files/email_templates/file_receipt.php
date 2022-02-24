@@ -393,7 +393,7 @@ if (isset($_GET['deletedFiles']))
 </table>
 <div align="center" class="img-container center fixedwidth" style="padding-right: 0px;padding-left: 0px;">
 <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr style="line-height:0px"><td style="padding-right: 0px;padding-left: 0px;" align="center"><![endif]-->
-<div style="font-size:1px;line-height:40px"> </div><img align="center" alt="Alternate text" border="0" class="center fixedwidth" src="https://yourconference.live/COS/uploads/upload_system_files/vendor/images/ycl_Icon.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 100%; max-width: 128px; display: block;" title="Alternate text" width="128"/>
+<div style="font-size:1px;line-height:40px"> </div><img align="center" alt="Alternate text" border="0" class="center fixedwidth" src="https://yourconference.live/COS/uploads/upload_system_files/vendor/images/afs_Icon.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 100%; max-width: 128px; display: block;" title="Alternate text" width="128"/>
 <!--[if mso]></td></tr></table><![endif]-->
 </div>
 <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 40px; padding-left: 40px; padding-top: 15px; padding-bottom: 10px; font-family: Tahoma, sans-serif"><![endif]-->

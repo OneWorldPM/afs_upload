@@ -273,7 +273,7 @@ if (isset($_POST['content']))
 </table>
 <div align="center" class="img-container center fixedwidth" style="padding-right: 0px;padding-left: 0px;">
 <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr style="line-height:0px"><td style="padding-right: 0px;padding-left: 0px;" align="center"><![endif]-->
-<div style="font-size:1px;line-height:40px"> </div><img align="center" alt="Alternate text" border="0" class="center fixedwidth" src="https://yourconference.live/COS/uploads/upload_system_files/vendor/images/ycl_Icon.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 100%; max-width: 70px; display: block;" title="Your Conference Live" width="128"/>
+<div style="font-size:1px;line-height:40px"> </div><img align="center" alt="Alternate text" border="0" class="center fixedwidth" src="https://yourconference.live/COS/uploads/upload_system_files/vendor/images/afs_Icon.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 100%; max-width: 70px; display: block;" title="Your Conference Live" width="128"/>
 <!--[if mso]></td></tr></table><![endif]-->
 </div>
 <table border="0" cellpadding="0" cellspacing="0" class="divider" role="presentation" style="table-layout: fixed; vertical-align: top; border-spacing: 0; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; min-width: 100%; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;" valign="top" width="100%">

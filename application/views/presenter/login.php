@@ -3,12 +3,12 @@
 <div class="content" style="padding: unset;">
     <div class="container">
         <div class="jumbotron" style="padding: unset;">
-            <img class="" src="<?=base_url().'./upload_system_files/vendor/images/COS_banner_login.svg'?>" alt="banner" style="width:100%;">
+            <img class="" src="<?=base_url().'./upload_system_files/vendor/images/AFS_Upload_Banner.png'?>" alt="banner" style="width:100%;">
         </div>
 
         <div class="row pt-5">
             <div class="col-md-6 order-md-2">
-                <img src="<?=base_url('upload_system_files/vendor/')?>images/undraw_filing_system_b5d2_with_cos_banner.svg" alt="Folder image" class="img-fluid">
+                <img src="<?=base_url('upload_system_files/vendor/')?>images/afs_Icon.png" alt="Folder image" class="img-fluid">
             </div>
             <div class="col-md-6 contents">
                 <div class="row justify-content-center">
