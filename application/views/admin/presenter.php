@@ -158,8 +158,6 @@
                 'password' : password
             },
             function(response) {
-                alert(response);
-                console.log(response);
                 if (response == 'success') {
                     Swal.fire(
                         'Success',
@@ -183,7 +181,7 @@
                         'error'
                     )
                 }
-
+                $('#addPresenterModal').modal('hide');
         },'json')
     });
 
