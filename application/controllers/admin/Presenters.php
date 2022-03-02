@@ -44,4 +44,15 @@ class Presenters extends CI_Controller
         }
     }
 
+    public function add_presenter(){
+       $result = $this->m_presenter->addPresenter();
+
+       if($result=='success'){
+           echo json_encode('success');
+       }elseif($result=='email_exist'){
+           echo json_encode('email_exist');
+       }else{
+           echo json_encode('error');
+       }
+    }
 }

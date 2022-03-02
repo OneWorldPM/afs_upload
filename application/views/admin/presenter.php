@@ -5,7 +5,7 @@
         <div class="col-md-12">
             <h3>Presenters</h3>
             <p>Loaded Presenters are listed here</p>
-
+            <button class="btn btn-info" style="float:right; margin-bottom: 10px" id="addPresenterBtn">Add Presenter</button>
             <div id="lastUpdatedAlert" class="alert alert-warning alert-dismissible fade show" role="alert" style="display:none;">
                 This list was last loaded on <strong><span id="lastUpdated"></span></strong>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -42,7 +42,69 @@
 
     <hr>
 </main>
-
+<!-- Add Presenter Modal -->
+<div class="modal fade" id="addPresenterModal" tabindex="-1" role="dialog" aria-labelledby="addPresenterModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addPresenterModalTitle">Add Presenter</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="col-auto">
+                    <label class="sr-only" for="inlineFormInputGroup">Name Prefix</label>
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Name Prefix</div>
+                        </div>
+                        <input type="text" class="form-control" id="name-prefix" placeholder="">
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <label class="sr-only" for="inlineFormInputGroup">First Name</label>
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">First Name</div>
+                        </div>
+                        <input type="text" class="form-control" id="first-name" placeholder="">
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <label class="sr-only" for="inlineFormInputGroup">Last Name</label>
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Last Name</div>
+                        </div>
+                        <input type="text" class="form-control" id="last-name" placeholder="">
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <label class="sr-only" for="inlineFormInputGroup">Email</label>
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Email</div>
+                        </div>
+                        <input type="text" class="form-control" id="email" placeholder="">
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <label class="sr-only" for="inlineFormInputGroup">Password</label>
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Password</div>
+                        </div>
+                        <input type="text" class="form-control" id="password" placeholder="">
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="savePresenter">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.datatables.net/1.10.23/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap4.min.css" crossorigin="anonymous" />
@@ -71,6 +133,58 @@
 
         });
 
+    });
+
+    $('#addPresenterBtn').on('click', function(e){
+        e.preventDefault();
+        $('#addPresenterModal').modal('show');
+
+    })
+
+    $('#savePresenter').on('click', function(e){
+        e.preventDefault();
+        var email = $('#addPresenterModal #email').val();
+        var name_prefix = $('#addPresenterModal #name-prefix').val();
+        var last_name = $('#addPresenterModal #last-name').val();
+        var first_name = $('#addPresenterModal #first-name').val();
+        var password = $('#addPresenterModal #password').val();
+
+        $.post('<?=base_url('admin/presenters/add_presenter')?>',
+            {
+                'email': email,
+                'name_prefix': name_prefix,
+                'last_name' : last_name,
+                'first_name' : first_name,
+                'password' : password
+            },
+            function(response) {
+                alert(response);
+                console.log(response);
+                if (response == 'success') {
+                    Swal.fire(
+                        'Success',
+                        'Presenter Added',
+                        'success'
+                    )
+                }
+                else if(response == 'email_exist')
+                {
+                    Swal.fire(
+                        'Sorry',
+                        'Email Already Exist',
+                        'info'
+                    )
+                }
+            else
+                {
+                    Swal.fire(
+                        'Error',
+                        'Something went wrong',
+                        'error'
+                    )
+                }
+
+        },'json')
     });
 
     function loadPresenters() {
@@ -111,6 +225,5 @@
                 toastr.error("Unable to load your presentations data");
             });
     }
-
 </script>
 

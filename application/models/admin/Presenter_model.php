@@ -47,4 +47,34 @@ class Presenter_model extends CI_Model
             return '';
         }
     }
+
+    function addPresenter(){
+        $post = $this->input->post();
+        $post['creation_date'] = date('Y-m-d H:i:s');
+        if($this->checkExistEmail($post['email'])=='true'){
+            return 'email_exist';
+        }else{
+            $this->db->insert('presenter', $post);
+
+            if($this->db->affected_rows() > 0 ){
+                return 'success';
+            }else{
+                return 'error';
+            }
+        }
+
+    }
+
+    function checkExistEmail($email){
+        $email_exist = $this->db->select('*')
+            ->from('presenter')
+            ->where('email', $email)
+            ->get();
+
+        if($email_exist->num_rows() > 0){
+            return 'true';
+        }else
+            return 'false';
+
+    }
 }
