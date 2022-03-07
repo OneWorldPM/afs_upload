@@ -207,6 +207,7 @@ class Dashboard extends CI_Controller
         $user = $this->input->post()['user_id'];
         $file_id = $this->input->post()['file_id'];
         $presentation_id = $this->input->post()['presentation_id'];
+        $room_id = $this->input->post()['room_id'];
 
         if ($user != $logged_in_user)
         {
@@ -218,6 +219,7 @@ class Dashboard extends CI_Controller
         $this->db->set('deleted_date_time', date("Y-m-d H:i:s"));
         $this->db->where('presenter_id', $user);
         $this->db->where('id', $file_id);
+        $this->db->where('room_id', $room_id);
         $this->db->update('uploads');
 
         if ($this->db->affected_rows() > 0)
@@ -233,12 +235,13 @@ class Dashboard extends CI_Controller
         return;
     }
 
-    public function getUploadedFiles($user_id, $presentation_id)
+    public function getUploadedFiles($user_id, $presentation_id, $room_id)
     {
         $this->db->select('*');
         $this->db->from('uploads');
         $this->db->where('presenter_id', $user_id);
         $this->db->where('presentation_id', $presentation_id);
+        $this->db->where('room_id', $room_id);
         $this->db->where('deleted', 0);
 
         $result = $this->db->get();

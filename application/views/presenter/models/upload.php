@@ -155,7 +155,7 @@
     function showUploader(user_id, presentation_id, session_name, presentation_name, presentation_type, speaker_lname, session_id, room_id, room_name, presentation_date, presentation_start)
     {
 
-        fillUploadedFiles(user_id, presentation_id);
+        fillUploadedFiles(user_id, presentation_id, room_id);
 
         $('#sessionName').text(session_name);
         $('#presentationName').text(presentation_name);
@@ -242,10 +242,10 @@
         });
     }
 
-    function fillUploadedFiles(user_id, presentation_id) {
+    function fillUploadedFiles(user_id, presentation_id, room_id) {
         $('#uploadedFiles').html('<img src="<?=base_url('upload_system_files/vendor/images/ycl_anime_500kb.gif')?>">');
 
-        $.get( "<?=base_url('dashboard/getUploadedFiles/')?>"+user_id+"/"+presentation_id, function(response) {
+        $.get( "<?=base_url('dashboard/getUploadedFiles/')?>"+user_id+"/"+presentation_id+"/"+room_id, function(response) {
             response = JSON.parse(response);
 
             if (response.status == 'success')
@@ -257,7 +257,7 @@
                         '<li class="list-group-item">' +
                         '<a href="<?=base_url('dashboard/openFile/')?>'+file.id+'" target="_blank"><button class="btn btn-sm btn-info mr-3"><i class="fas fa-save"></i> Download</button></a>' +
                         '<span class="uploaded-file-names badge badge-success"><i class="fas fa-clipboard-check"></i> '+file.name+' <span class="badge badge-info">'+Math.ceil(file.size/1000)+' kb</span></span>' +
-                        '<button class="delete-file-btn btn btn-sm btn-danger ml-3" presentation-id="'+file.presentation_id+'" user-id="'+file.presenter_id+'" file-id="'+file.id+'" file-name="'+file.name+'"><i class="fas fa-trash"></i> Delete</button>' +
+                        '<button class="delete-file-btn btn btn-sm btn-danger ml-3" presentation-id="'+file.presentation_id+'" user-id="'+file.presenter_id+'" file-id="'+file.id+'" file-name="'+file.name+'" room_id="'+file.room_id+'"><i class="fas fa-trash"></i> Delete</button>' +
                         '</li>');
                 });
                 $('#uploadedFiles').append('</ul>');
@@ -280,6 +280,7 @@
         let file_name = $(this).attr('file-name');
         let user_id = $(this).attr('user-id');
         let presentation_id = $(this).attr('presentation-id');
+        let room_id = $(this).attr('room_id');
 
         Swal.fire({
             title: 'Are you sure?',
@@ -296,7 +297,8 @@
                     {
                         user_id: user_id,
                         presentation_id: presentation_id,
-                        file_id: file_id
+                        file_id: file_id,
+                        room_id: room_id
                     })
                     .done(function( data ) {
 
@@ -311,7 +313,7 @@
                                 'success'
                             );
 
-                            fillUploadedFiles(user_id, presentation_id);
+                            fillUploadedFiles(user_id, presentation_id, room_id);
 
                         }else{
                             Swal.fire(
