@@ -18,15 +18,10 @@
 
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item active" aria-current="page"><span class="category"></span> <span id="sessionName"></span></li>
+                        <li class="breadcrumb-item active" aria-current="page">Presentation Date: <span id="presentationDateLabel"></span></li>
                     </ol>
                 </nav>
 
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item active" aria-current="page">Presentation: <span id="presentationName"></span></li>
-                    </ol>
-                </nav>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item active" aria-current="page">Room: <span id="roomLabel"></span></li>
@@ -35,7 +30,13 @@
 
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item active" aria-current="page">Presentation Date: <span id="presentationDateLabel"></span></li>
+                        <li class="breadcrumb-item active" aria-current="page"><span class="category"></span>Session: <span id="sessionName"></span></li>
+                    </ol>
+                </nav>
+
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item active" aria-current="page">Presentation: <span id="presentationName"></span></li>
                     </ol>
                 </nav>
 
@@ -151,7 +152,7 @@
     });
 
 
-    function showUploader(user_id, presentation_id, session_name, presentation_name, presentation_type, speaker_lname, session_id, room_id, room_name, presentation_date)
+    function showUploader(user_id, presentation_id, session_name, presentation_name, presentation_type, speaker_lname, session_id, room_id, room_name, presentation_date, presentation_start)
     {
 
         fillUploadedFiles(user_id, presentation_id);
@@ -199,6 +200,7 @@
             formData.append('speaker_lname', speaker_lname);
             formData.append('session_id', session_id);
             formData.append('room_id', room_id);
+            formData.append('presentation_start', presentation_start);
         });
 
         uploadDropzone.on('success', function() {

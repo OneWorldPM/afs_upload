@@ -18,7 +18,19 @@
 
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item active" aria-current="page"><span class="category"></span> <span id="sessionName"></span></li>
+                        <li class="breadcrumb-item active" aria-current="page">Presentation Date: <span id="presentationDateLabel"></span></li>
+                    </ol>
+                </nav>
+
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item active" aria-current="page">Room: <span id="roomLabel"></span></li>
+                    </ol>
+                </nav>
+
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item active" aria-current="page"><span class="category">Session: </span> <span id="sessionName"></span></li>
                     </ol>
                 </nav>
 
@@ -28,11 +40,7 @@
                     </ol>
                 </nav>
 
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item active" aria-current="page">Room: <span id="roomLabel"></span></li>
-                    </ol>
-                </nav>
+
 
                 <section class="mt-3" id="existingFilesSection">
                     <div>
@@ -64,12 +72,13 @@
     });
 
 
-    function showFiles(user_id, presentation_id, session_name, presentation_name, room_id, room_name)
+    function showFiles(user_id, presentation_id, session_name, presentation_name, room_id, room_name, presentation_date)
     {
         fillUploadedFiles(user_id, presentation_id, room_id, room_name);
 
         $('#sessionName').text(session_name);
         $('#presentationName').text(presentation_name);
+        $('#presentationDateLabel').text(presentation_date);
 
         // if(label == "Session Presentation" ){
         //     $('.category').text('Session Title : ');

@@ -111,9 +111,10 @@
             let room_id = $(this).attr('room_id');
             let room_name = $(this).attr('room_name');
             let presentation_date = $(this).attr('presentation_date');
+            let presentation_start = $(this).attr('presentation_start');
 
 
-            showUploader(user_id, presentation_id, session_name, presentation_name, presentation_type, speaker_lname, session_id, room_id, room_name, presentation_date);
+            showUploader(user_id, presentation_id, session_name, presentation_name, presentation_type, speaker_lname, session_id, room_id, room_name, presentation_date, presentation_start);
         });
 
         $('#presentationTable').on('click', '.details-btn', function () {
@@ -128,8 +129,9 @@
             let room_id = $(this).attr('room_id');
             let room_name = $(this).attr('room_name');
             let presentation_date = $(this).attr('presentation_date');
+            let presentation_start = $(this).attr('presentation_start');
 
-            showUploader(user_id, presentation_id, session_name, presentation_name, presentation_type, speaker_lname, session_id, room_id, room_name, presentation_date);
+            showUploader(user_id, presentation_id, session_name, presentation_name, presentation_type, speaker_lname, session_id, room_id, room_name, presentation_date, presentation_start);
         });
 
 
@@ -152,8 +154,8 @@
 
 
                 let statusBadge = (presentation.uploadStatus)?'<span class="badge badge-success"><i class="fas fa-check-circle"></i> '+presentation.uploadStatus+' File(s) uploaded</span>':'<span class="badge badge-warning"><i class="fas fa-exclamation-circle"></i> No Uploads</span>';
-                let uploadBtn = '<button class="upload-btn btn btn-sm btn-info" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="<?=$this->session->userdata('user_id')?>" presentation-id="'+presentation.id+'"  session_id="'+presentation.session_id+'" speaker_lname="'+presentation.speaker_lname+'" room_name="'+presentation.room_name+'" room_id="'+presentation.room_id+'"  presentation_date="'+presentation.presentation_date+'"><i class="fas fa-upload"></i> Upload</button>';
-                let detailsBtn = '<button class="details-btn btn btn-sm btn-primary text-white" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="<?=$this->session->userdata('user_id')?>" presentation-id="'+presentation.id+'"  session_id="'+presentation.session_id+'" speaker_lname="'+presentation.speaker_lname+'" room_name="'+presentation.room_name+'" room_id="'+presentation.room_id+'" presentation_date="'+presentation.presentation_date+'"><i class="fas fa-info-circle"></i> Details</button>';
+                let uploadBtn = '<button class="upload-btn btn btn-sm btn-info" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="<?=$this->session->userdata('user_id')?>" presentation-id="'+presentation.id+'"  session_id="'+presentation.session_id+'" speaker_lname="'+presentation.speaker_lname+'" room_name="'+presentation.room_name+'" room_id="'+presentation.room_id+'"  presentation_date="'+presentation.presentation_date+'" presentation_start="'+presentation.presentation_start+'"><i class="fas fa-upload"></i> Upload</button>';
+                let detailsBtn = '<button class="details-btn btn btn-sm btn-primary text-white" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="<?=$this->session->userdata('user_id')?>" presentation-id="'+presentation.id+'"  session_id="'+presentation.session_id+'" speaker_lname="'+presentation.speaker_lname+'" room_name="'+presentation.room_name+'" room_id="'+presentation.room_id+'" presentation_date="'+presentation.presentation_date+'" presentation_start="'+presentation.presentation_start+'"><i class="fas fa-info-circle"></i> Details</button>';
 
 
                 var presentation_date = (presentation.presentation_date && presentation.presentation_date !=='0000-00-00')?presentation.presentation_date:"";

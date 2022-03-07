@@ -533,6 +533,7 @@ class Dashboard extends CI_Controller
             'start_time'=> $post['session_start'],
             'end_time'=> $post['session_end'],
             'created_on'=> date('Y-m-d H:i:s'),
+            'presentation_start'=> date($post['presentation_start']),
 
         );
 

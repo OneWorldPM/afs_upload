@@ -103,6 +103,9 @@ class Dashboard extends CI_Controller
             $upload_dir = FCPATH.'upload_system_files/doc_upload/'.$user;
             $unique_str = md5(date('Y-m-d H:i:s:u'));
 
+            $pr = strtotime($post['presentation_start']);
+            $presentation_start = date( 'H:i', $pr);
+
             $name = $_FILES['file']['name'];
             $size = $_FILES['file']['size'];
             $type = $_FILES['file']['type'];
@@ -119,13 +122,13 @@ class Dashboard extends CI_Controller
 
                 $file_path = 'upload_system_files/doc_upload/'.$user.'/'.$upload_file_name;
 
-                $new_name = $post['session_id'].'_'.$post['speaker_lname'].'_'.$filename;
+                $new_name = $presentation_start.'_'.$post['speaker_lname'].'_'.$filename;
 
                 if($this->check_upload_resubmission($presentation_id, $user, $new_name)){
                     $increment_name = $this->check_upload_resubmission($presentation_id, $user, $new_name);
                     $new_name= $increment_name.'.'.$extension;
                 }else{
-                    $new_name = $post['session_id'].'_'.$post['speaker_lname'].'_'.$name;
+                    $new_name = $presentation_start.'_'.$post['speaker_lname'].'_'.$name;
                 }
 
                 $upload = array(
