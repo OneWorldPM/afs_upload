@@ -29,7 +29,13 @@
                 </nav>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item active" aria-current="page">Label: <span id="presentationLabel"></span></li>
+                        <li class="breadcrumb-item active" aria-current="page">Room: <span id="roomLabel"></span></li>
+                    </ol>
+                </nav>
+
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item active" aria-current="page">Presentation Date: <span id="presentationDateLabel"></span></li>
                     </ol>
                 </nav>
 
@@ -145,7 +151,7 @@
     });
 
 
-    function showUploader(user_id, presentation_id, session_name, presentation_name, presentation_type, speaker_lname, session_id, label)
+    function showUploader(user_id, presentation_id, session_name, presentation_name, presentation_type, speaker_lname, session_id, room_id, room_name, presentation_date)
     {
 
         fillUploadedFiles(user_id, presentation_id);
@@ -153,14 +159,15 @@
         $('#sessionName').text(session_name);
         $('#presentationName').text(presentation_name);
         $('.presentation_type').text(presentation_type);
-        if(label == "Session Presentation" ){
-            $('.category').text('Session Title : ');
-        }
-        else{
-            $('.category').text('Category : ');
-        }
+        $('#presentationDateLabel').text(presentation_date);
+        // if(label == "Session Presentation" ){
+        //     $('.category').text('Session Title : ');
+        // }
+        // else{
+        //     $('.category').text('Category : ');
+        // }
 
-        $('#presentationLabel').text(label);
+        $('#roomLabel').text(room_name);
 
 
         let form = '' +
@@ -191,6 +198,7 @@
             formData.append('presentation_id', presentation_id);
             formData.append('speaker_lname', speaker_lname);
             formData.append('session_id', session_id);
+            formData.append('room_id', room_id);
         });
 
         uploadDropzone.on('success', function() {

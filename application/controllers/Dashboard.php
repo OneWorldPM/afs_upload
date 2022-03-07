@@ -30,11 +30,11 @@ class Dashboard extends CI_Controller
     {
         $user_id = $this->session->userdata('user_id');
 
-        $this->db->select('p.*, s.name as session_name, ul.name as label, pr.last_name as speaker_lname');
+        $this->db->select('p.*, s.name as session_name,  pr.last_name as speaker_lname, rm.name as room_name');
         $this->db->from('presentations p');
         $this->db->join('sessions s', 's.id = p.session_id');
-        $this->db->join('upload_label ul', 'p.label = ul.id');
         $this->db->join('presenter pr', 'p.presenter_id=pr.presenter_id', 'left');
+        $this->db->join('room rm', 'p.room_id = rm.id');
         $this->db->where("p.presenter_id ", $user_id);
         $this->db->where("p.active ", 1);
         $this->db->order_by('p.created_on', 'DESC');
@@ -136,6 +136,7 @@ class Dashboard extends CI_Controller
                     'file_path' => $file_path,
                     'presentation_id' => $presentation_id,
                     'presenter_id' => $user,
+                    'room_id' => $post['room_id'],
                     "uploaded_date_time" => date("Y-m-d H:i:s")
                 );
 

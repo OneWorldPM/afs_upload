@@ -23,6 +23,7 @@ class Dashboard extends CI_Controller
         $this->load->view('admin/models/change-password');
         $this->load->view('admin/models/files');
         $this->load->view('admin/models/load-presentations');
+        $this->load->view('admin/models/create-presentation');
 
         $this->load->view('admin/foot');
     }
@@ -30,11 +31,11 @@ class Dashboard extends CI_Controller
     public function getPresentationList()
     {
 
-        $this->db->select("p.*, s.name as session_name, pr.presenter_id, CONCAT(pr.first_name, ' ', pr.last_name) as presenter_name, ul.name as label, pr.email as email");
+        $this->db->select("p.*, s.name as session_name, pr.presenter_id, CONCAT(pr.first_name, ' ', pr.last_name) as presenter_name, pr.email as email, rm.name as room_name, rm.id as room_id");
         $this->db->from('presentations p');
         $this->db->join('sessions s', 's.id = p.session_id');
         $this->db->join('presenter pr', 'pr.presenter_id = p.presenter_id');
-        $this->db->join('upload_label ul', 'p.label=ul.id', 'left');
+        $this->db->join('room rm', 'p.room_id = rm.id');
         $this->db->order_by('p.created_on', 'DESC');
         $result = $this->db->get();
 
@@ -51,13 +52,14 @@ class Dashboard extends CI_Controller
         }
     }
 
-    public function getUploadedFiles($user_id, $presentation_id)
+    public function getUploadedFiles($user_id, $presentation_id, $room_id)
     {
         $this->db->select('*');
         $this->db->from('uploads');
         $this->db->where('presenter_id', $user_id);
         $this->db->where('presentation_id', $presentation_id);
         $this->db->where('deleted', 0);
+//        $this->db->where('room_id', $room_id);
 
         $result = $this->db->get();
 
@@ -509,4 +511,72 @@ class Dashboard extends CI_Controller
 
         }
     }
+
+    public function get_presenter(){
+       $presenters =  $this->db->select('*')
+            ->from('presenter')
+            ->get();
+
+       if($presenters->num_rows()>0)
+           echo json_encode($presenters->result());
+       else
+           echo json_encode('error');
+    }
+
+    public function save_presentation(){
+        $post = $this->input->post();
+
+        $presentation_field = array(
+            'name'=> $post['presentation_title'],
+            'presenter_id'=> $post['presenter_id'],
+            'presentation_date'=> $post['presentation_date'],
+            'start_time'=> $post['session_start'],
+            'end_time'=> $post['session_end'],
+            'created_on'=> date('Y-m-d H:i:s'),
+
+        );
+
+        if ($this->checkRoom($post['room_name'])){
+            $presentation_field['room_id'] = $this->checkRoom($post['room_name']);
+        }else{
+            $this->db->insert('room', array('name'=>$post['room_name']));
+            $presentation_field['room_id']=$this->db->insert_id();
+        }
+
+        if($this->checkSessionExist($post['session_name'], $post['session_full_name'])){
+            $presentation_field['session_id'] = $this->checkSessionExist($post['session_name'], $post['session_full_name']);
+
+        }else{
+            $this->db->insert('sessions', array('name'=>$post['session_name'], 'full_name'=>$post['session_full_name']));
+            $presentation_field['session_id'] = $this->db->insert_id();
+        }
+
+
+//        print_r($presentation_field);exit;
+        $this->db->insert('presentations', $presentation_field);
+
+
+    }
+
+    function checkRoom($room_name){
+        $room_exist = $this->db->select('id')->from('room')->like('name', $room_name)->get();
+            if($room_exist->num_rows()>0){
+                return $room_exist->row()->id;
+            }else{
+                return false;
+            }
+    }
+
+    function checkSessionExist($session_name, $session_full_name){
+        $session_exist = $this->db->select('id')->from('sessions')->like('name', $session_name)->like('full_name', $session_full_name)->get();
+
+        if($session_exist->num_rows()>0){
+            return $session_exist->row()->id;
+        }
+        else{
+            return false;
+        }
+    }
+
+
 }

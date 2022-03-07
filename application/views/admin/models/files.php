@@ -30,7 +30,7 @@
 
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item active" aria-current="page">Label: <span id="presentationLabel"></span></li>
+                        <li class="breadcrumb-item active" aria-current="page">Room: <span id="roomLabel"></span></li>
                     </ol>
                 </nav>
 
@@ -64,21 +64,21 @@
     });
 
 
-    function showFiles(user_id, presentation_id, session_name, presentation_name, label)
+    function showFiles(user_id, presentation_id, session_name, presentation_name, room_id, room_name)
     {
-        fillUploadedFiles(user_id, presentation_id);
+        fillUploadedFiles(user_id, presentation_id, room_id, room_name);
 
         $('#sessionName').text(session_name);
         $('#presentationName').text(presentation_name);
 
-        if(label == "Session Presentation" ){
-            $('.category').text('Session Title : ');
-        }
-        else{
-            $('.category').text('Category : ');
-        }
+        // if(label == "Session Presentation" ){
+        //     $('.category').text('Session Title : ');
+        // }
+        // else{
+        //     $('.category').text('Category : ');
+        // }
 
-        $('#presentationLabel').text(label);
+        $('#roomLabel').text(room_name);
 
         $('#filesModal').modal({ //Should not auto-close
             backdrop: 'static',
@@ -86,10 +86,10 @@
         });
     }
 
-    function fillUploadedFiles(user_id, presentation_id) {
+    function fillUploadedFiles(user_id, presentation_id, room_id) {
         $('#uploadedFiles').html('<img src="<?=base_url('upload_system_files/vendor/images/ycl_anime_500kb.gif')?>">');
 
-        $.get( "<?=base_url('admin/dashboard/getUploadedFiles/')?>"+user_id+"/"+presentation_id, function(response) {
+        $.get( "<?=base_url('admin/dashboard/getUploadedFiles/')?>"+user_id+"/"+presentation_id+"/"+room_id, function(response) {
             response = JSON.parse(response);
 
             if (response.status == 'success')
