@@ -16,19 +16,19 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">Session Name</span>
                     </div>
-                    <input name="session_name" id="session_name" type="text" class="form-control required-field" aria-label="Session Name" required>
+                    <input name="session_name" id="session_name" type="text" class="form-control" aria-label="Session Name" required>
                 </div>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Session Full Name</span>
                     </div>
-                    <input name="session_full_name" id="session_full_name" type="text" class="form-control required-field" aria-label="Session Name" required>
+                    <input name="session_full_name" id="session_full_name" type="text" class="form-control" aria-label="Session Name" required>
                 </div>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Presentation Title</span>
                     </div>
-                    <input name="presentation_title" id="presentation_title" type="text" class="form-control required-field" aria-label="Session Name" required>
+                    <input name="presentation_title" id="presentation_title" type="text" class="form-control" aria-label="Session Name" required>
                 </div>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
@@ -43,35 +43,35 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">Room Name</span>
                     </div>
-                        <input name="room_name" id="room_name" type="text" class="form-control required-field" aria-label="Room Name" required>
+                        <input name="room_name" id="room_name" type="text" class="form-control" aria-label="Room Name" required>
                 </div>
 
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Presentation Date</span>
                     </div>
-                    <input name="presentation_date" id="presentation_date" type="date" class="form-control required-field" aria-label="Presentation Date" required>
+                    <input name="presentation_date" id="presentation_date" type="date" class="form-control" aria-label="Presentation Date" required>
                 </div>
 
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Session Start Time</span>
                     </div>
-                    <input name="session_start" id="session_start" type="time" class="form-control required-field" aria-label="Session Start Time" required>
+                    <input name="session_start" id="session_start" type="time" class="form-control" aria-label="Session Start Time" required>
                 </div>
 
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Session End Time</span>
                     </div>
-                    <input name="session_end" id="session_end" type="time" class="form-control required-field" aria-label="Session End Time" required>
+                    <input name="session_end" id="session_end" type="time" class="form-control" aria-label="Session End Time" required>
                 </div>
 
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Presentation Start Time</span>
                     </div>
-                    <input name="presentation_start" id="presentation_start" type="time" class="form-control required-field" aria-label="Session Start Time" required>
+                    <input name="presentation_start" id="presentation_start" type="time" class="form-control" aria-label="Session Start Time" required>
                 </div>
                     <button type="submit" class="btn btn-primary" id="savePresentationBtn">Save changes</button>
                 </form>
