@@ -48,15 +48,15 @@
             <li class="nav-item">
                 <a class="nav-link" href="<?=base_url('admin/presenters')?>"><i class="fas fa-chalkboard-teacher"></i> Presenters</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="<?=base_url('admin/categories')?>"><i class="far fa-clone"></i> Categories</a>
-            </li>
+<!--            <li class="nav-item">-->
+<!--                <a class="nav-link" href="--><?//=base_url('admin/categories')?><!--"><i class="far fa-clone"></i> Categories</a>-->
+<!--            </li>-->
             <li class="nav-item">
                 <span class="nav-link" style="cursor: pointer;" data-toggle="modal" data-target="#loadPresentationsModal" data-backdrop="static" data-keyboard="false"><i class="fas fa-upload"></i> Load Data</span>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="<?=base_url('admin/load_history')?>"><i class="fas fa-tasks"></i> Load History</a>
-            </li>
+<!--            <li class="nav-item">-->
+<!--                <a class="nav-link" href="--><?//=base_url('admin/load_history')?><!--"><i class="fas fa-tasks"></i> Load History</a>-->
+<!--            </li>-->
             <li class="nav-item">
                 <a class="nav-link" href="<?=base_url('admin/email')?>"><i class="fas fa-envelope"></i> Email</a>
             </li>

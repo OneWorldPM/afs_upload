@@ -555,7 +555,10 @@ class Dashboard extends CI_Controller
 
 //        print_r($presentation_field);exit;
         $this->db->insert('presentations', $presentation_field);
-
+        if($this->db->affected_rows()>0){
+            echo json_encode('success');
+        }else
+            echo json_encode('error');
 
     }
 
@@ -580,4 +583,71 @@ class Dashboard extends CI_Controller
     }
 
 
+    public function getPresentationById()
+    {
+        $presentation_id = $this->input->post('presentation_id');
+
+        $this->db->select("p.*, s.name as session_name, s.full_name as session_full_name, pr.presenter_id, CONCAT(pr.first_name, ' ', pr.last_name) as presenter_name, pr.email as email, rm.name as room_name, rm.id as room_id");
+        $this->db->from('presentations p');
+        $this->db->where('p.id', $presentation_id);
+        $this->db->join('sessions s', 's.id = p.session_id');
+        $this->db->join('presenter pr', 'pr.presenter_id = p.presenter_id');
+        $this->db->join('room rm', 'p.room_id = rm.id');
+        $this->db->order_by('p.created_on', 'DESC');
+        $result = $this->db->get();
+
+        if ($result->num_rows() > 0)
+        {
+            foreach ($result->result() as $row)
+                $row->uploadStatus = $this->checkUploadStatus($row->id);
+
+            echo json_encode(array('status'=>'success', 'data'=>$result->result()), JSON_PRETTY_PRINT);
+            return;
+        } else {
+            echo json_encode(array('status'=>'error', 'msg'=>'Unable to load your presentations data'));
+            return;
+        }
+    }
+
+    public function update_presentation($presentation_id){
+        $post = $this->input->post();
+//        print_r($post);exit;
+        $presentation_field = array(
+            'name'=>$post['presentation_title'],
+            'presenter_id'=>$post['presenter_id'],
+            'presentation_date'=> $post['presentation_date'],
+            'updated_on'=>date('Y-m-d H:i:s'),
+            'presentation_start'=>$post['presentation_start'],
+            'start_time'=>$post['session_start'],
+            'end_time'=>$post['session_end'],
+        );
+
+
+
+        if ($this->checkRoom($post['room_name'])){
+            $presentation_field['room_id'] = $this->checkRoom($post['room_name']);
+        }else{
+            $this->db->insert('room', array('name'=>$post['room_name']));
+            $presentation_field['room_id']=$this->db->insert_id();
+        }
+
+        if($this->checkSessionExist($post['session_name'], $post['session_full_name'])){
+            $presentation_field['session_id'] = $this->checkSessionExist($post['session_name'], $post['session_full_name']);
+        }else{
+            $this->db->insert('sessions', array('name'=>$post['session_name'], 'full_name'=>$post['session_full_name']));
+            $presentation_field['session_id'] = $this->db->insert_id();
+        }
+
+        $this->db->where('id', $presentation_id);
+         $this->db->update('presentations', $presentation_field);
+        if($this->db->affected_rows()>0){
+            echo json_encode('success');
+        }else
+            echo json_encode('failed');
+
+
+
+
+
+    }
 }

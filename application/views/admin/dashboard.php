@@ -22,12 +22,13 @@
                 <tr>
                     <th>Status</th>
                     <th>ID</th>
-                    <th>Session Name</th>
+                    <th style=" white-space: nowrap "> Session Time</th>
+                    <th>Presentation Start</th>
                     <th>Room</th>
+                    <th>Session Name</th>
                     <th>Presentation Title</th>
                     <th>Presenter</th>
                     <th>Email</th>
-                    <th style=" white-space: nowrap ">Date | Time</th>
                     <th>Info</th>
                     <th>Actions</th>
                 </tr>
@@ -108,7 +109,10 @@
         });
 
         $('#presentationTable').on('click', '.edit-presentation-btn', function () {
-            toastr.warning("Under development");
+            let button = $(this);
+            let presentationId = $(this).attr('presentation-id');
+
+            edit_presentation(presentationId);
         });
 
         $('.create-presentation-btn').on('click', function (e) {
@@ -139,7 +143,7 @@
                 let filesBtn = '<button class="files-btn btn btn-sm btn-info text-white" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="'+presentation.presenter_id+'" presentation-id="'+presentation.id+'" room_id="'+presentation.room_id+'" room_name="'+presentation.room_name+'" presentation_date="'+presentation.presentation_date+'"><i class="fas fa-folder-open"></i> Files</button>';
                 let logsBtn = '<button class="presentation-logs-btn btn btn-sm btn-warning text-white mt-1" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="<?=$this->session->userdata('user_id')?>" presentation-id="'+presentation.id+'" room_name="'+presentation.room_name+'" presentation_date="'+presentation.presentation_date+'"><i class="fas fa-history"></i> Logs</button>';
 
-                let editBtn = '<button class="edit-presentation-btn btn btn-sm btn-primary text-white"><i class="fas fa-edit"></i> Edit</button>';
+                let editBtn = '<button class="edit-presentation-btn btn btn-sm btn-primary text-white" presentation-id="'+presentation.id+'" ><i class="fas fa-edit"></i> Edit</button>';
                 let disableBtn = (presentation.active==0)?'<button class="activate-presentation-btn btn btn-sm btn-success text-white mt-1" presentation-id="'+presentation.id+'"><i class="fas fa-check"></i> Activate</button>':'<button class="disable-presentation-btn btn btn-sm btn-danger text-white mt-1" presentation-id="'+presentation.id+'"><i class="fas fa-times"></i> Disable</button>';
 
                 if(presentation.presentation_date !== null){
@@ -148,7 +152,7 @@
                     presentation_date ='';
                 }
                 if(presentation.start_time !== null && presentation.end_time !== null){
-                    presentation_time = presentation.start_time+'-'+presentation.end_time;
+                    presentation_time = convertTime(presentation.start_time)+' - '+convertTime(presentation.end_time);
                 }else{
                     presentation_time = '';
                 }
@@ -159,12 +163,13 @@
                     '    '+statusBadge+'\n' +
                     '  </td>\n' +
                     '  <td>'+presentation.id+'</td>\n' +
-                    '  <td>'+presentation.session_name+'</td>\n' +
+                    '  <td style="white-space: nowrap">'+presentation_date+'<br>'+presentation_time+'</td>\n' +
+                    '  <td style="white-space: nowrap">'+convertTime(presentation.presentation_start)+'</td>\n' +
                     '  <td>'+presentation.room_name+'</td>\n' +
+                    '  <td>'+presentation.session_name+'</td>\n' +
                     '  <td>'+presentation.name+'</td>\n' +
                     '  <td>'+presentation.presenter_name+'</td>\n' +
                     '  <td style="width: 200px !important; word-break:break-word">'+presentation.email+'</td>\n' +
-                    '  <td style="white-space: nowrap">'+presentation_date+'<br>'+presentation_time+'</td>\n' +
                     '  <td>\n' +
                     '    '+filesBtn+'\n' +
                     '    '+logsBtn+'\n' +
@@ -259,6 +264,17 @@
         }).fail(function() {
             toastr.error('Unable disable the presentation');
         })
+    }
+
+</script>
+<script>
+    function convertTime(timeString){
+        var H = +timeString.substr(0, 2);
+        var h = (H % 12) || 12;
+        var ampm = H < 12 ? " AM" : " PM";
+        var single = H < 10 ? "0" : '';
+        timeString = single + h + timeString.substr(2, 3) + ampm;
+        return timeString;
     }
 
 </script>

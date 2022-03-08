@@ -11,7 +11,7 @@
             </div>
             <div class="modal-body">
 
-                <form id="formPresentation" action="<?=base_url()?>admin/dashboard/save_presentation" method="post">
+                <form id="formPresentation" action="" method="post">
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Session Name</span>
@@ -74,6 +74,7 @@
                     <input name="presentation_start" id="presentation_start" type="time" class="form-control" aria-label="Session Start Time" required>
                 </div>
                     <button type="submit" class="btn btn-primary" id="savePresentationBtn">Save changes</button>
+                    <button type="reset" class="btn btn-primary" id="resetBtn">Clear</button>
                 </form>
 
             </div>
@@ -86,21 +87,94 @@
 </div>
 
 <script>
+    let base_url = "<?=base_url()?>";
     $(function(){
-        let base_url = "<?=base_url()?>";
+
         $('.create-presentation-btn').on('click', function(){
-            $('#presenters_list').html('');
-            $.post(base_url+'/admin/dashboard/get_presenter',
-                function(presenters){
-                console.log(presenters);
-                    $.each(presenters, function(index, presenter){
-                        $('#presenters_list').append('<option value="'+presenter.presenter_id+'">'+presenter.first_name+''+presenter.last_name+'</option>');
-                    })
-                },'json')
+            $('#formPresentation').attr('action','<?=base_url()?>admin/dashboard/save_presentation');
+            get_presentersList();
         })
 
 
+        $('#formPresentation').submit(function(event){
+            event.preventDefault();
+            var actionUrl = $(this).attr('action');
+            $.ajax({
+                type: "POST",
+                url: actionUrl,
+                data: $(this).serialize(), // serializes the form's elements.
+                success: function(data)
+                {
+                  data = JSON.parse(data);
+                  if (data == 'success'){
+                      Swal.fire(
+                          'Success!',
+                          'Presentation Added',
+                          'success'
+                      )
+                      $('#session_name').val('');
+                      $('#session_full_name').val('');
+                      $('#presentation_title').val('');
+                      $('#presentation_title').val('');
+                      $('#room_name').val('');
+                      $('#presentation_date').val('');
+                      $('#presentation_start').val('');
+                      $('#session_start').val('');
+                      $('#session_end').val('');
+                  }else{
+                      Swal.fire(
+                          'Failed',
+                          'Something went wrong',
+                          'error'
+                      )
+                  }
+                    loadPresentations();
+                    $('#presentationTableBody').data.reload();
+                }
+
+            });
+        })
 
 
     })
+
+    function get_presentersList(){
+        $('#presenters_list').html('');
+        $.post(base_url+'/admin/dashboard/get_presenter',
+            function(presenters){
+                // console.log(presenters);
+                $.each(presenters, function(index, presenter){
+                    $('#presenters_list').append('<option id="presenter_'+presenter.presenter_id+'" value="'+presenter.presenter_id+'">'+presenter.first_name+' '+presenter.last_name+'</option>');
+                })
+            },'json')
+    }
+
+    function edit_presentation(presentation_id) {
+
+        $('#formPresentation').attr('action','<?=base_url()?>admin/dashboard/update_presentation/'+presentation_id);
+        get_presentersList();
+        $('#createPresentationModal').modal('show');
+        $.post(base_url + '/admin/dashboard/getPresentationById',
+            {
+                'presentation_id': presentation_id
+            },
+            function (presentation) {
+            presentation = JSON.parse(presentation);
+            $.each(presentation['data'], function(i, data){
+
+                $('#presenters_list #presenter_'+data.presenter_id+'').attr('selected', 'selected');
+                $('#session_name').val(data.session_name);
+                $('#session_full_name').val(data.session_full_name);
+                $('#presentation_title').val(data.name);
+                $('#room_name').val(data.room_name);
+                $('#presentation_date').val(data.presentation_date);
+                $('#presentation_start').val(data.presentation_start);
+                $('#session_start').val(data.start_time);
+                $('#session_end').val(data.end_time);
+            })
+        })
+    }
+
+
+
 </script>
