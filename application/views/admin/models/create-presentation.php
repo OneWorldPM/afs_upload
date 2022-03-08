@@ -4,7 +4,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="createPresentationModalTitle">Create Presentation</h5>
+                <h5 class="modal-title" id="createPresentationModalTitle"></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -91,6 +91,7 @@
     $(function(){
 
         $('.create-presentation-btn').on('click', function(){
+            $('#createPresentationModalTitle').html('Create Presentation');
             $('#formPresentation').attr('action','<?=base_url()?>admin/dashboard/save_presentation');
             get_presentersList();
         })
@@ -149,7 +150,17 @@
             },'json')
     }
 
-    function edit_presentation(presentation_id) {
+    function edit_presentation(presentation_id, upload_status) {
+
+        $('#createPresentationModalTitle').html('Update Presentation');
+        if(upload_status !== 'false'){
+            Swal.fire(
+                'Info',
+                'Cannot edit presentation with File(s) Uploaded',
+                'info'
+            )
+            return false;
+        }
 
         $('#formPresentation').attr('action','<?=base_url()?>admin/dashboard/update_presentation/'+presentation_id);
         get_presentersList();

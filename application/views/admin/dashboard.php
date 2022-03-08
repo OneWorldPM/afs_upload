@@ -111,8 +111,9 @@
         $('#presentationTable').on('click', '.edit-presentation-btn', function () {
             let button = $(this);
             let presentationId = $(this).attr('presentation-id');
+            let upload_status = $(this).attr('upload-status');
 
-            edit_presentation(presentationId);
+            edit_presentation(presentationId, upload_status);
         });
 
         $('.create-presentation-btn').on('click', function (e) {
@@ -128,7 +129,6 @@
         $.get( "<?=base_url('admin/dashboard/getPresentationList')?>", function(response) {
             response = JSON.parse(response);
 
-            console.log(response);
             if ( $.fn.DataTable.isDataTable('#presentationTable') ) {
                 $('#presentationTable').DataTable().destroy();
             }
@@ -143,7 +143,7 @@
                 let filesBtn = '<button class="files-btn btn btn-sm btn-info text-white" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="'+presentation.presenter_id+'" presentation-id="'+presentation.id+'" room_id="'+presentation.room_id+'" room_name="'+presentation.room_name+'" presentation_date="'+presentation.presentation_date+'"><i class="fas fa-folder-open"></i> Files</button>';
                 let logsBtn = '<button class="presentation-logs-btn btn btn-sm btn-warning text-white mt-1" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="<?=$this->session->userdata('user_id')?>" presentation-id="'+presentation.id+'" room_name="'+presentation.room_name+'" presentation_date="'+presentation.presentation_date+'"><i class="fas fa-history"></i> Logs</button>';
 
-                let editBtn = '<button class="edit-presentation-btn btn btn-sm btn-primary text-white" presentation-id="'+presentation.id+'" ><i class="fas fa-edit"></i> Edit</button>';
+                let editBtn = '<button class="edit-presentation-btn btn btn-sm btn-primary text-white" presentation-id="'+presentation.id+'"   user-id="'+presentation.presenter_id+'"  room_id="'+presentation.room_id+'" upload-status="'+presentation.uploadStatus+'"><i class="fas fa-edit"></i> Edit</button>';
                 let disableBtn = (presentation.active==0)?'<button class="activate-presentation-btn btn btn-sm btn-success text-white mt-1" presentation-id="'+presentation.id+'"><i class="fas fa-check"></i> Activate</button>':'<button class="disable-presentation-btn btn btn-sm btn-danger text-white mt-1" presentation-id="'+presentation.id+'"><i class="fas fa-times"></i> Disable</button>';
 
                 if(presentation.presentation_date !== null){
