@@ -215,7 +215,7 @@
 
             if (response.status == 'success')
             {
-                fillUploadedFiles(user_id, presentation_id);
+                fillUploadedFiles(user_id, presentation_id, room_id);
                 _this.removeFile(file);
                 uploadedFilesNo = uploadedFilesNo+1;
             }else{
@@ -243,11 +243,12 @@
     }
 
     function fillUploadedFiles(user_id, presentation_id, room_id) {
+        console.log('test',room_id);
         $('#uploadedFiles').html('<img src="<?=base_url('upload_system_files/vendor/images/ycl_anime_500kb.gif')?>">');
-
+        console.log(user_id,presentation_id,room_id);
         $.get( "<?=base_url('dashboard/getUploadedFiles/')?>"+user_id+"/"+presentation_id+"/"+room_id, function(response) {
             response = JSON.parse(response);
-
+            console.log(response.status);
             if (response.status == 'success')
             {
                 $('#uploadedFiles').html('');
