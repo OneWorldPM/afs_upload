@@ -19,6 +19,7 @@ class Login extends CI_Controller
         $this->load->view('presenter/head');
         $this->load->view('presenter/login');
         $this->load->view('presenter/foot');
+        $this->load->view('presenter/models/forgot-password');
     }
 
     public function verify()
@@ -101,4 +102,86 @@ class Login extends CI_Controller
         $this->session->unset_userdata('fullname');
         header('location:' . base_url());
     }
+
+    public function forgot_password(){
+        $email_exist = $this->db->select('*')
+            ->from('presenter')
+            ->where('email', $this->input->post('email'))
+            ->get();
+
+        if($email_exist->num_rows()>0){
+
+            if($this->newPassword($email_exist->result()[0]->email) !== 'error'){
+                $newPassword = $this->newPassword($email_exist->result()[0]->email);
+                $this->sendForgotPasswordEmail($email_exist->result()[0]->email, $newPassword );
+            }else{
+                echo json_encode(array('msg'=>'error', 'status'=>'Error 503, Please contact administrator'));
+            }
+
+        }else{
+            echo json_encode(array('msg'=>'error', 'status'=>'Email not found'));
+        }
+    }
+
+    function newPassword($email){
+        $this->load->helper('string');
+
+
+        $newPassword =random_string('alpha', 6);
+
+        $this->db->where('email', $email);
+        $this->db->update('presenter', array('password'=>$newPassword));
+
+        if($this->db->affected_rows()>0)
+        return $newPassword;
+        else return 'error';
+    }
+
+    function sendForgotPasswordEmail($email, $newPassword){
+
+            $subject = "AFS Forgot Password";
+            $content = 'Your new password is '. $newPassword . '<br> Click the link below to Login<a href="https://yourconference.live/AFS/upload">AFS Login</a>';
+
+            $this->load->config('email', TRUE);
+
+            if (!$this->config->config['email']['smtp_user'])
+            {
+                $response = array(
+                    'status' => 'failed',
+                    'msg' => "Send email option is not configured, please contact system administrator."
+                );
+
+                echo json_encode($response);
+
+                return;
+            }
+
+            $config = Array(
+                'protocol' => $this->config->config['email']['email_protocol'],
+                'smtp_host' => $this->config->config['email']['smtp_host'],
+                'smtp_port' => $this->config->config['email']['smtp_port'],
+                'smtp_user' => $this->config->config['email']['smtp_user'],
+                'smtp_pass' => $this->config->config['email']['smtp_pass'],
+                'mailtype' => $this->config->config['email']['mailtype'],
+                'charset' => $this->config->config['email']['charset'],
+                'smtp_crypto'   => 'ssl'
+            );
+            $this->load->library('email', $config);
+
+            $this->email->from('presentations@yourconference.live', 'AFS Presentation Submission');
+            $this->email->to($email);
+
+            $this->email->subject($subject);
+
+            $this->email->message($content);
+            $result = $this->email->send();
+
+            if($result){
+                echo json_encode(array('msg'=>'success', 'status'=>'Email Successfully Sent'));
+            }else{
+                echo json_encode(array('msg'=>'error', 'status'=>'Error sending email, Please contact administrator'));
+            }
+            return;
+    }
+
 }
