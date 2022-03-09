@@ -140,7 +140,7 @@ class Login extends CI_Controller
     function sendForgotPasswordEmail($email, $newPassword){
 
             $subject = "AFS Forgot Password";
-            $content = 'Your new password is '. $newPassword . '<br> Click the link below to Login<a href="https://yourconference.live/AFS/upload">AFS Login</a>';
+            $content = 'Your new password is '. $newPassword . '<br> Click the link below to <a href="https://yourconference.live/AFS/upload"><u>Login Page</u></a>';
 
             $this->load->config('email', TRUE);
 
