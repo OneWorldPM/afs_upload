@@ -645,9 +645,23 @@ class Dashboard extends CI_Controller
         }else
             echo json_encode('failed');
 
-
-
-
-
     }
+
+    public function download_batch_by_presentation($presentation_id, $room_id, $user_id){
+       $uploads = $this->db->select('*')
+            ->from('uploads')
+            ->where('presentation_id', $presentation_id)
+            ->where('room_id', $room_id)
+            ->where('presenter_id', $user_id)
+            ->where('deleted', '0')
+            ->get();
+
+
+       if($uploads->num_rows()>0){
+           echo json_encode(array('msg'=>'success', 'files'=>$uploads->result()));
+       }else{
+           echo json_encode(array('msg'=>'error', 'files'=>$uploads->result()));
+       }
+    }
+
 }

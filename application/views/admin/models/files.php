@@ -44,7 +44,7 @@
 
                 <section class="mt-3" id="existingFilesSection">
                     <div>
-                        <h5 class="modal-title">Uploaded Files <button class="download-all-btn btn btn-sm btn-success text-white mb-2"><i class="fas fa-file-archive"></i> Download All</button></h5>
+                        <h5 class="modal-title">Uploaded Files <button class="download-all-btn btn btn-sm btn-success text-white mb-2" presentation-id="" room-id="" session-id="" user-id=""><i class="fas fa-file-archive"></i> Download All</button></h5>
                     </div>
                     <div class="text-center" id="uploadedFiles" style="border: 1px solid #9f9f9f52;">
                         <img src="<?=base_url('upload_system_files/vendor/images/ycl_anime_500kb.gif')?>">
@@ -65,8 +65,22 @@
 
     $(document).ready(function() {
 
-        $('.download-all-btn').on('click', function () {
-            toastr.warning("Under development");
+        $('.download-all-btn').on('click', function (e) {
+            e.preventDefault();
+            var presentation_id = $(this).attr('presentation-id');
+            var room_id = $(this).attr('room-id');
+            var user_id = $(this).attr('user-id');
+
+            $.get('<?=base_url()?>admin/dashboard/download_batch_by_presentation/'+presentation_id+"/"+room_id+"/"+user_id,
+
+                function(response){
+                    response = JSON.parse(response);
+                    console.log(response.files);
+                    $.each(response.files, function(i, file){
+                        window.open('<?=base_url('admin/dashboard/openFile/')?>'+file.id,'_blank');
+                    })
+
+            })
         });
 
     });
@@ -97,7 +111,9 @@
 
     function fillUploadedFiles(user_id, presentation_id, room_id) {
         $('#uploadedFiles').html('<img src="<?=base_url('upload_system_files/vendor/images/ycl_anime_500kb.gif')?>">');
-
+        $('.download-all-btn').attr('presentation-id', presentation_id);
+        $('.download-all-btn').attr('room-id', room_id);
+        $('.download-all-btn').attr('user-id', user_id);
         $.get( "<?=base_url('admin/dashboard/getUploadedFiles/')?>"+user_id+"/"+presentation_id+"/"+room_id, function(response) {
             response = JSON.parse(response);
 
@@ -111,7 +127,7 @@
                     $('#uploadedFiles').append('' +
                         '<li class="list-group-item">' +
                         '<a href="https://docs.google.com/gview?url=<?=base_url()?>'+file.file_path+'&embedded=true" target="_blank"><button class="btn btn-sm btn-primary mr-3 text-white"><i class="fas fa-external-link-alt"></i> Open</button></a>' +
-                        '<a href="<?=base_url('admin/dashboard/openFile/')?>'+file.id+'" target="_blank"><button class="btn btn-sm btn-info mr-3"><i class="fas fa-save"></i> Download</button></a>' +
+                        '<a href="<?=base_url('admin/dashboard/openFile/')?>'+file.id+'" target="_blank" id="download_'+file.id+'"><button class="btn btn-sm btn-info mr-3"><i class="fas fa-save"></i> Download</button></a>' +
                         '<span class="uploaded-file-names badge badge-success"><i class="fas fa-clipboard-check"></i> '+file.name+' <span class="badge badge-info">'+Math.ceil(file.size/1000)+' kb</span></span>' +
                         '<!--<button class="delete-file-btn btn btn-sm btn-danger ml-3" presentation-id="'+file.presentation_id+'" user-id="'+file.presenter_id+'" file-id="'+file.id+'" file-name="'+file.name+'"><i class="fas fa-trash"></i> Delete</button>-->' +
                         '</li>');
