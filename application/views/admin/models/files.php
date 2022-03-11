@@ -91,6 +91,7 @@
             var file_id = $(this).attr('file-id');
             window.open(link,'_blank');
             checkRecentUploadsStatus(file_id);
+            loadPresentations();
         })
     });
 
