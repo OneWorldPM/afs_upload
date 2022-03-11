@@ -212,7 +212,7 @@
             }
         })
     }
-    
+
     function formatDateTime(datetimeStr, include_year = true) {
         let lastUpdatedDate = new Date(datetimeStr);
         let year = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(lastUpdatedDate);
