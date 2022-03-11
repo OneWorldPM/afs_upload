@@ -682,7 +682,130 @@ class Dashboard extends CI_Controller
     }
 
     public function update_downloaded_uploads($file_id){
-        $this->db->insert('download_status', array('uploads_id'=>$file_id, 'admin_id'=>$_SESSION['user_id'], 'download_status'=>1));
+        $result = $this->db->select('*')
+            ->from('download_status')
+            ->where('uploads_id', $file_id)
+            ->get();
+
+        if(!$result->num_rows()>0){
+            $this->db->insert('download_status', array('uploads_id'=>$file_id, 'admin_id'=>$_SESSION['user_id'], 'download_status'=>1));
+        }
+    }
+
+//
+//
+//    public function test(){
+//        $presentations = $this->db->select('*, p.id as presentation_id')
+//            ->from('presentations p')
+//            ->get();
+//
+//        $return_array = array();
+//        foreach ($presentations->result() as $presentation){
+//           $return_array[] =  $this->test_get_uploads($presentation->id);
+//        }
+//
+////        echo json_encode($return_array);
+//        echo '<pre>';
+////        print_r($return_array);
+//        foreach ($return_array as $ret)
+//        {
+//            print_r($ret);
+//        }
+//
+//    }
+//    public function test_get_uploads($presentation_id){
+//        $uploads = $this->db->select('*, u.id as upload_id, ds.id as download_id')
+//            ->from('uploads u')
+//            ->join('download_status ds', 'u.id = ds.uploads_id')
+//            ->where('u.presentation_id', $presentation_id)
+//            ->where('ds.admin_id', $_SESSION['user_id'])
+//            ->where('ds.download_status', '1')
+//            ->group_by('u.presentation_id')
+//            ->get();
+//
+//        return $uploads->result();
+//    }
+//
+//    public function get_from_upload(){
+//        $upload_status = $this->db->select('*')
+//            ->from('uploads u')
+//            ->group_by('presentation_id')
+//            ->get();
+//        $upload_ids = array();
+//        foreach ($upload_status->result() as $upload){
+//            $upload_ids[] = $upload->id;
+//        }
+//
+//        $dl = $this->get_dl();
+//
+//        $diff = array_diff($upload_ids,$dl);
+//        //        print_r($dl);
+////        print_r($diff);
+//      echo json_encode($diff);
+////        $this->getNoDownlodData($dl);
+//
+//
+//    }
+//
+//    function get_dl(){
+//        $dl_ids = array();
+//        $dls = $this->db->select('*')
+//            ->from('download_status ds')
+//            ->get();
+//
+//        foreach ($dls->result() as $dl){
+//            $dl_ids[] = $dl->uploads_id;
+//        }
+//
+//     return $dl_ids;
+//    }
+//
+//    function getDS(){
+//
+//        $ds = $this->db->select('*')
+//            ->from('download_status ds')
+//            ->join('uploads u', 'ds.uploads_id = u.id', 'left')
+//            ->where('admin_id', $_SESSION['user_id'])
+//            ->get();
+//
+//        echo '<pre>';
+//        print_r($ds->result());
+//
+//    }
+
+    function getdata($presentation_id){
+        $data = $this->db->select('*')
+            ->from('download_status ds')
+            ->join('uploads u', 'ds.uploads_id = u.id')
+            ->where('admin_id', $_SESSION['user_id'])
+            ->where('presentation_id', $presentation_id)
+            ->get();
+
+       if(COUNT($data->result())){
+           $downloadsCount = COUNT($data->result());
+           $uploadsCount= $this->getUploadsCount($presentation_id);
+           $undownloadedFile = $uploadsCount-$downloadsCount;
+
+           if($undownloadedFile>0){
+              echo json_encode($undownloadedFile);
+           }else{
+               echo json_encode('0');
+           }
+       }
+    }
+
+    function getUploadsCount($presentation_id){
+        $data = $this->db->select('*')
+            ->from('uploads')
+            ->where('deleted', 0)
+            ->where('presentation_id', $presentation_id)
+            ->get();
+
+        if($data->num_rows()>0)
+              return COUNT($data->result());
+        else{
+            return '';
+        }
     }
 
 

@@ -136,9 +136,12 @@
             $('#presentationTableBody').html('');
             $.each(response.data, function(i, presentation) {
 
+                // console.log(presentation.id);
+              getUndownloadedData(presentation.id);
 
                 let statusBadge = (presentation.uploadStatus)?'<span class="badge badge-success mr-1"><i class="fas fa-check-circle"></i> '+presentation.uploadStatus+' File(s) uploaded</span>':'<span class="badge badge-warning mr-1"><i class="fas fa-exclamation-circle"></i> No Uploads</span>';
                 statusBadge += (presentation.active==1)?'<span class="active-status badge badge-success" presentation-id="'+presentation.id+'"><i class="fas fa-check"></i> Active</span>':'<span class="disabled-status badge badge-danger" presentation-id="'+presentation.id+'"><i class="fas fa-times"></i> Disabled</span>';
+                statusBadge += '<span  id="undownloadedFileCount_'+presentation.id+'" style="display: none; margin-top:4px"></span>'
 
                 let filesBtn = '<button class="files-btn btn btn-sm btn-info text-white" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="'+presentation.presenter_id+'" presentation-id="'+presentation.id+'" room_id="'+presentation.room_id+'" room_name="'+presentation.room_name+'" presentation_date="'+presentation.presentation_date+'"><i class="fas fa-folder-open"></i> Files</button>';
                 let logsBtn = '<button class="presentation-logs-btn btn btn-sm btn-warning text-white mt-1" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="<?=$this->session->userdata('user_id')?>" presentation-id="'+presentation.id+'" room_name="'+presentation.room_name+'" presentation_date="'+presentation.presentation_date+'"><i class="fas fa-history"></i> Logs</button>';
@@ -200,6 +203,16 @@
             });
     }
 
+    function getUndownloadedData(presentation){
+        $.get( "<?=base_url('admin/dashboard/getdata/')?>"+presentation, function(response) {
+            if(response > 0){
+               $('#undownloadedFileCount_'+presentation).html('<i class="fas fa-bell" style="color: red"></i> Undownloaded File(s)'+response);
+               $('#undownloadedFileCount_'+presentation).css('display', 'block');
+               $('#undownloadedFileCount_'+presentation).attr('class', 'badge badge-warning');
+            }
+        })
+    }
+    
     function formatDateTime(datetimeStr, include_year = true) {
         let lastUpdatedDate = new Date(datetimeStr);
         let year = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(lastUpdatedDate);
