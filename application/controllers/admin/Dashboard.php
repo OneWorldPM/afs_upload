@@ -702,17 +702,11 @@ class Dashboard extends CI_Controller
             ->where('presentation_id', $presentation_id)
             ->get();
 
-       if(COUNT($data->result())){
-           $downloadsCount = COUNT($data->result());
-           $uploadsCount= $this->getUploadsCount($presentation_id);
-           $undownloadedFile = $uploadsCount-$downloadsCount;
-
-           if($undownloadedFile>0){
-              echo json_encode($undownloadedFile);
-           }else{
-               echo json_encode('0');
-           }
-       }
+        if($data->num_rows()>0)
+            return COUNT($data->result());
+        else{
+            return '0';
+        }
     }
 
     function getUploadsCount($presentation_id){
@@ -722,11 +716,19 @@ class Dashboard extends CI_Controller
             ->where('presentation_id', $presentation_id)
             ->get();
 
-        if($data->num_rows()>0)
-              return COUNT($data->result());
-        else{
-            return '';
+        if(COUNT($data->result())){
+            $uploadsCount = COUNT($data->result());
+            $downloadsCount= $this->getdata($presentation_id);
+            $undownloadedFile = $uploadsCount-$downloadsCount;
+
+            if($uploadsCount>0){
+                echo json_encode(array('status'=>'1', 'upload_count'=>$uploadsCount, 'undownloaded'=>$undownloadedFile));
+            }else{
+                echo json_encode($uploadsCount);
+            }
         }
+
+
     }
 
 
