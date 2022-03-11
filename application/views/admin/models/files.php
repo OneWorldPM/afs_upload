@@ -75,14 +75,23 @@
 
                 function(response){
                     response = JSON.parse(response);
-                    console.log(response.files);
+                    // console.log(response.files);
                     $.each(response.files, function(i, file){
                         window.open('<?=base_url('admin/dashboard/openFile/')?>'+file.id,'_blank');
+                        $.post('<?=base_url()?>admin/dashboard/update_downloaded_uploads/'+file.id);
                     })
 
             })
         });
 
+
+        $('#uploadedFiles').on('click','.downloadFileBtn', function(e){
+            e.preventDefault();
+            var link = $(this).attr('href');
+            var file_id = $(this).attr('file-id');
+            window.open(link,'_blank');
+            checkRecentUploadsStatus(file_id);
+        })
     });
 
 
@@ -109,6 +118,20 @@
         });
     }
 
+    function checkRecentUploadsStatus(file_id){
+        $.post('<?=base_url()?>admin/dashboard/check_downloaded_uploads/'+file_id,
+        function(response){
+            response = JSON.parse(response);
+
+            if(response.msg=== 'empty'){
+                $('#new-upload_'+response.file_id).css('display','block');
+
+            }else{
+                $('#new-upload_'+response.file_id).css('display','none');
+            }
+        });
+    }
+
     function fillUploadedFiles(user_id, presentation_id, room_id) {
         $('#uploadedFiles').html('<img src="<?=base_url('upload_system_files/vendor/images/ycl_anime_500kb.gif')?>">');
         $('.download-all-btn').attr('presentation-id', presentation_id);
@@ -123,12 +146,14 @@
                 $('#uploadedFiles').append('<ul class="list-group">');
                 $.each(response.files, function(i, file) {
 
+                    checkRecentUploadsStatus(file.id);
 
                     $('#uploadedFiles').append('' +
                         '<li class="list-group-item">' +
                         '<a href="https://docs.google.com/gview?url=<?=base_url()?>'+file.file_path+'&embedded=true" target="_blank"><button class="btn btn-sm btn-primary mr-3 text-white"><i class="fas fa-external-link-alt"></i> Open</button></a>' +
-                        '<a href="<?=base_url('admin/dashboard/openFile/')?>'+file.id+'" target="_blank" id="download_'+file.id+'"><button class="btn btn-sm btn-info mr-3"><i class="fas fa-save"></i> Download</button></a>' +
-                        '<span class="uploaded-file-names badge badge-success"><i class="fas fa-clipboard-check"></i> '+file.name+' <span class="badge badge-info">'+Math.ceil(file.size/1000)+' kb</span></span>' +
+                        '<a class="downloadFileBtn" href="<?=base_url('admin/dashboard/openFile/')?>'+file.id+'" target="_blank" id="download_'+file.id+'" file-id="'+file.id+'"><button class="btn btn-sm btn-info mr-3"><i class="fas fa-save"></i> Download </button></a>' +
+                        '<span class="uploaded-file-names badge badge-success" style="position: relative; display: inline-block"><i class="fas fa-clipboard-check"></i> '+file.name+' <span class="badge badge-info">'+Math.ceil(file.size/1000)+' kb </span>' +
+                        '<i class="badge badge-warning" id="new-upload_'+file.id+'" style="display:none; width:40px; position:absolute; right:-10px; top: -10px; color:#138496; border-radius:50%"> new </i></span>' +
                         '<!--<button class="delete-file-btn btn btn-sm btn-danger ml-3" presentation-id="'+file.presentation_id+'" user-id="'+file.presenter_id+'" file-id="'+file.id+'" file-name="'+file.name+'"><i class="fas fa-trash"></i> Delete</button>-->' +
                         '</li>');
                 });

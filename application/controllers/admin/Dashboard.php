@@ -106,6 +106,7 @@ class Dashboard extends CI_Controller
 
         if ($result->num_rows() > 0)
         {
+            $this->update_downloaded_uploads($file_id);
             $this->Admin_Logger->log("Downloaded", null, null, $file_id);
 
             $file = FCPATH.$result->row()->file_path;
@@ -663,5 +664,26 @@ class Dashboard extends CI_Controller
            echo json_encode(array('msg'=>'error', 'files'=>$uploads->result()));
        }
     }
+
+    public function check_downloaded_uploads($file_id){
+      $downloaded = $this->db->select('*')
+            ->from('download_status')
+            ->where('uploads_id', $file_id)
+            ->where('admin_id',  $_SESSION['user_id'])
+            ->where('download_status', 1)
+            ->get();
+
+      if($downloaded->num_rows()>0){
+          echo json_encode(array('msg'=>'success', 'status'=>$downloaded->result(), 'file_id'=>$file_id));
+      }else{
+          echo json_encode(array('msg'=>'empty', 'status'=>$downloaded->result(), 'file_id'=>$file_id));
+      }
+
+    }
+
+    public function update_downloaded_uploads($file_id){
+        $this->db->insert('download_status', array('uploads_id'=>$file_id, 'admin_id'=>$_SESSION['user_id'], 'download_status'=>1));
+    }
+
 
 }
