@@ -685,6 +685,7 @@ class Dashboard extends CI_Controller
         $result = $this->db->select('*')
             ->from('download_status')
             ->where('uploads_id', $file_id)
+            ->where('admin_id', $_SESSION['admin_id'])
             ->get();
 
         if(!$result->num_rows()>0){
@@ -694,7 +695,7 @@ class Dashboard extends CI_Controller
 
 
 
-    function getdata($presentation_id){
+    function getDownloadsCount($presentation_id){
         $data = $this->db->select('*')
             ->from('download_status ds')
             ->join('uploads u', 'ds.uploads_id = u.id')
@@ -718,7 +719,7 @@ class Dashboard extends CI_Controller
 
         if(COUNT($data->result())){
             $uploadsCount = COUNT($data->result());
-            $downloadsCount= $this->getdata($presentation_id);
+            $downloadsCount= $this->getDownloadsCount($presentation_id);
             $undownloadedFile = $uploadsCount-$downloadsCount;
 
             if($uploadsCount>0){
