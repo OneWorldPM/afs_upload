@@ -769,7 +769,7 @@ class Dashboard extends CI_Controller
                 $last_name = $data->last_name;
                 $prs = date('H:i', strtotime($data->presentation_start));
                 $presentation_time_dir = str_replace(':','',$prs).'_'.$last_name;
-                $zip->addFile($full_path, $presentation_day.'/'.$room_name.'/'.$session_name .'/'.$last_name.'/'.$presentation_time_dir.'/'.$filename); // to add current file
+                $zip->addFile($full_path, $presentation_day.'/'.$room_name.'/'.$session_name .'/'.$presentation_time_dir.'/'.$filename); // to add current file
                 }
             }
         }
