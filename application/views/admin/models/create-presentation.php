@@ -57,21 +57,21 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">Session Start Time</span>
                     </div>
-                    <input name="session_start" id="session_start" type="time" class="form-control" aria-label="Session Start Time" required>
+                    <input name="session_start" id="session_start" type="time" class="form-control" aria-label="Session Start Time" timeformat="24h" required>
                 </div>
 
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Session End Time</span>
                     </div>
-                    <input name="session_end" id="session_end" type="time" class="form-control" aria-label="Session End Time" required>
+                    <input name="session_end" id="session_end" type="time" class="form-control" aria-label="Session End Time" timeformat="24h" required>
                 </div>
 
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Presentation Start Time</span>
                     </div>
-                    <input name="presentation_start" id="presentation_start" type="time" class="form-control" aria-label="Session Start Time" required>
+                    <input name="presentation_start" id="presentation_start" type="time" class="form-control" aria-label="Session Start Time" timeformat="24h" required>
                 </div>
                     <button type="submit" class="btn btn-primary" id="savePresentationBtn">Save changes</button>
                     <button type="reset" class="btn btn-primary" id="resetBtn">Clear</button>

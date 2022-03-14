@@ -122,13 +122,13 @@ class Dashboard extends CI_Controller
 
                 $file_path = 'upload_system_files/doc_upload/'.$user.'/'.$upload_file_name;
 
-                $new_name = $presentation_start.'_'.$post['speaker_lname'].'_'.$filename;
+                $new_name = str_replace(':','',$presentation_start).'_'.$post['speaker_lname'].'_'.$filename;
 
                 if($this->check_upload_resubmission($presentation_id, $user, $new_name)){
                     $increment_name = $this->check_upload_resubmission($presentation_id, $user, $new_name);
                     $new_name= $increment_name.'.'.$extension;
                 }else{
-                    $new_name = $presentation_start.'_'.$post['speaker_lname'].'_'.$name;
+                    $new_name = str_replace(':','',$presentation_start).'_'.$post['speaker_lname'].'_'.$name;
                 }
 
                 $upload = array(

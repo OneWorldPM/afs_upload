@@ -15,11 +15,13 @@
 
         </div>
         <a href="<?=base_url().'admin/dashboard/presentationToCsv'?>" target="_blank" class="btn btn-primary float-left mb-2 ml-5 text-white" style="cursor: pointer"><i class="fas fa-file-csv"></i> Export CSV</a>
+        <a href="#" target="_blank" class="btn btn-primary float-left mb-2 ml-5 text-white" style="cursor: pointer" id="downloadSelectedPresentation"><i class="fas fa-file-archive"></i> Zip & Download  Selected Presentation</a>
         <div class="col-md-12">
             <button class="create-presentation-btn btn btn-success float-right"><i class="fas fa-plus"></i> Create</button>
             <table id="presentationTable" class="table table-striped table-bordered" style="width:100%">
                 <thead>
                 <tr>
+                    <th><input type="checkbox" name="check" id="checkAllPresentation">Select All</th>
                     <th>Status</th>
                     <th>ID</th>
                     <th style=" white-space: nowrap "> Session Time</th>
@@ -121,6 +123,50 @@
             $('#createPresentationModal').modal('show');
         });
 
+
+        $('#checkAllPresentation').prop('checked', false);
+        $('#checkAllPresentation').on('click', function(){
+            $('input:checkbox').not(this).prop('checked', this.checked);
+        });
+
+        $('#downloadSelectedPresentation').on('click', function(e){
+            e.preventDefault();
+            toastr['info']('please wait...')
+            var checkedPresentationIds = [];
+            var $this = $('.checkedPresentation');
+            $('.checkedPresentation:checked').each(function(){
+
+                if($('.checkedPresentation').is(':checked')){
+                    checkedPresentationIds.push($(this).attr('presentation-id'));
+                }
+            })
+            console.log(checkedPresentationIds);
+            checkedPresentationIds = checkedPresentationIds.join('-')
+
+
+            $.post('<?=base_url()?>admin/dashboard/download_checked_presentation_zip/',
+                {
+                    'checkedPresentationIds':checkedPresentationIds
+                },
+                function(response){
+                    response = JSON.parse(response);
+
+                 if(response.status === 'success'){
+                     toastr.clear();
+                     Swal.fire(
+                         'Done!',
+                         `<a href="<?=base_url()?>${response.file_name}"><h3> Click here to Download File! <i class="fas fa-download"></i></h3></a>
+                         <br><small class="text-danger">Downloading zip files will not affect undownloaded file status</small>`,
+                         'success'
+                     )
+                 }else{
+                     toastr.clear();
+                     toastr['error'](response.msg);
+                 }
+
+            })
+        })
+
     } );
 
 
@@ -149,6 +195,7 @@
                 let editBtn = '<button class="edit-presentation-btn btn btn-sm btn-primary text-white" presentation-id="'+presentation.id+'"   user-id="'+presentation.presenter_id+'"  room_id="'+presentation.room_id+'" upload-status="'+presentation.uploadStatus+'"><i class="fas fa-edit"></i> Edit</button>';
                 let disableBtn = (presentation.active==0)?'<button class="activate-presentation-btn btn btn-sm btn-success text-white mt-1" presentation-id="'+presentation.id+'"><i class="fas fa-check"></i> Activate</button>':'<button class="disable-presentation-btn btn btn-sm btn-danger text-white mt-1" presentation-id="'+presentation.id+'"><i class="fas fa-times"></i> Disable</button>';
 
+                let presentationCheckbox = '<input type="checkbox" class="checkedPresentation" name="checkedPresentation" id="checkedPresentation_'+presentation.id+'" presentation-id="'+presentation.id+'" room-id="'+presentation.room_id+'" presenter-id="'+presentation.presenter_id+'" session-id="'+presentation.session_id+'">';
                 if(presentation.presentation_date !== null){
                     presentation_date = presentation.presentation_date;
                 }else{
@@ -162,6 +209,7 @@
 
                 $('#presentationTableBody').append('' +
                     '<tr>\n' +
+                    '<td>'+presentationCheckbox+'</td>' +
                     '  <td>\n' +
                     '    '+statusBadge+'\n' +
                     '  </td>\n' +
@@ -186,9 +234,9 @@
 
             $('#presentationTable').DataTable({
                 initComplete: function() {
-                    $(this.api().table().container()).find('input').attr('autocomplete', 'off');
-                    $(this.api().table().container()).find('input').attr('type', 'text');
-                    $(this.api().table().container()).find('input').val('upload');
+                    $('#presentationTable_filter').find('input').attr('autocomplete', 'off');
+                    $('#presentationTable_filter').find('input').attr('type', 'text');
+                    $('#presentationTable_filter').find('input').val('upload');
                     //$(this.api().table().container()).find('input').val('');
                 },
 
@@ -205,7 +253,7 @@
 
     function getUndownloadedData(presentation, upload_status){
         $.get( "<?=base_url('admin/dashboard/getUploadsCount/')?>"+presentation, function(response) {
-            console.log(response);
+            // console.log(response);
             if(response.upload_count == response.undownloaded){
                $('#undownloadedFileCount_'+presentation).html('<i class="fas fa-bell" style="color: red"></i> Undownloaded File(s)'+response.upload_count);
                $('#undownloadedFileCount_'+presentation).css('display', 'block');

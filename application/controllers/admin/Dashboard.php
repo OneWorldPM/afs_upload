@@ -31,7 +31,7 @@ class Dashboard extends CI_Controller
     public function getPresentationList()
     {
 
-        $this->db->select("p.*, s.name as session_name, pr.presenter_id, CONCAT(pr.first_name, ' ', pr.last_name) as presenter_name, pr.email as email, rm.name as room_name, rm.id as room_id");
+        $this->db->select("p.*, s.name as session_name,s.id as session_id, pr.presenter_id, CONCAT(pr.first_name, ' ', pr.last_name) as presenter_name, pr.email as email, rm.name as room_name, rm.id as room_id");
         $this->db->from('presentations p');
         $this->db->join('sessions s', 's.id = p.session_id');
         $this->db->join('presenter pr', 'pr.presenter_id = p.presenter_id');
@@ -732,5 +732,71 @@ class Dashboard extends CI_Controller
 
     }
 
+    public function download_checked_presentation_zip(){
+        $presentationIds = $this->input->post('checkedPresentationIds');
+        if(!$presentationIds){
+            echo json_encode(array('status'=>'no_file_selected','msg'=>'Please Select Talks to Download'));
+            die;
+        }
+        $presentationIds= explode('-', $presentationIds);
+
+        echo json_encode($this->zipPresentation($presentationIds));
+
+    }
+
+    function zipPresentation($presentationIds){
+
+        $day = date('m-d');
+
+        $zip = new ZipArchive();
+
+        $zipName = 'talks.zip';
+
+        if ($zip->open($zipName, ZipArchive::OVERWRITE|ZipArchive::CREATE) !== TRUE) {
+           return array('status'=>'error', 'msg'=>'Something went wrong!');
+        }
+
+
+        foreach ($presentationIds as $presentationId) {
+            $result = $this->get_file_path($presentationId);
+            if($result){
+            foreach ($result as $index=> $data) {
+                $full_path = FCPATH . $data->file_path;
+                $filename = $data->name;
+                $session_name = $data->session_name;
+                $room_name = $data->room_name;
+                $presentation_day = date('m-d', strtotime($data->presentation_date));
+                $last_name = $data->last_name;
+                $prs = date('H:i', strtotime($data->presentation_start));
+                $presentation_time_dir = str_replace(':','',$prs).'_'.$last_name;
+                $zip->addFile($full_path, $presentation_day.'/'.$room_name.'/'.$session_name .'/'.$last_name.'/'.$presentation_time_dir.'/'.$filename); // to add current file
+                }
+            }
+        }
+
+// close and save archive
+        $zip->close();
+
+        return array('status'=>'success', 'file_name'=>$zipName);
+
+    }
+
+    function get_file_path($presentationId){
+            $file_path = $this->db->select('u.file_path, u.name, s.name as session_name, r.name as room_name, p.presentation_date as presentation_date, pr.last_name as last_name, pr.first_name as first_name, p.presentation_start as presentation_start')
+                ->from('uploads u')
+                ->join('presentations p', 'u.presentation_id = p.id', 'left')
+                ->join('sessions s', 'p.session_id = s.id', 'left')
+                ->join('room r', 'u.room_id = r.id', 'left')
+                ->join('presenter pr', 'u.presenter_id = pr.presenter_id', 'left')
+                ->where('u.deleted', '0')
+                ->where('u.presentation_id', $presentationId)
+                ->get();
+
+            if($file_path->num_rows()>0){
+                return $file_path->result();
+            }else{
+                return false;
+            }
+    }
 
 }
