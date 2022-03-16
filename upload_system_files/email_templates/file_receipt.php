@@ -170,7 +170,7 @@ if (isset($_GET['deletedFiles']))
 <!--<![endif]-->
 <div align="center" class="img-container center fixedwidth" style="padding-right: 0px;padding-left: 0px;">
 <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr style="line-height:0px"><td style="padding-right: 0px;padding-left: 0px;" align="center"><![endif]-->
-<div style="font-size:1px;line-height:22px"></div><img align="center" alt="I'm an image" border="0" class="center fixedwidth" src="https://yourconference.live/AFS/upload/upload_system_files/vendor/images/AFS_Upload_Banner.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 100%; display: block;" title="I'm an image" width="288"/>
+<div style="font-size:1px;line-height:22px"></div><img align="center" alt="I'm an image" border="0" class="center fixedwidth" src="<?=base_url?>upload_system_files/vendor/images/AFS_Upload_Banner.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 100%; display: block;" title="I'm an image" width="288"/>
 <div style="font-size:1px;line-height:25px"></div>
 <!--[if mso]></td></tr></table><![endif]-->
 </div>
@@ -196,7 +196,7 @@ if (isset($_GET['deletedFiles']))
 <!--<![endif]-->
 
 <div align="center" class="img-container center fixedwidth" style="padding-right: 40px;padding-left: 40px;">
-<!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr style="line-height:0px"><td style="padding-right: 40px;padding-left: 40px;" align="center"><![endif]--><img align="center" alt="I'm an image" border="0" class="center fixedwidth" src="https://yourconference.live/COS/uploads/upload_system_files/vendor/images/undraw_sync_files_xb3r.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 100%; max-width: 192px; display: block;" title="I'm an image" width="192"/>
+<!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr style="line-height:0px"><td style="padding-right: 40px;padding-left: 40px;" align="center"><![endif]--><img align="center" alt="I'm an image" border="0" class="center fixedwidth" src="<?=base_url?>upload_system_files/vendor/images/undraw_sync_files_xb3r.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 100%; max-width: 192px; display: block;" title="I'm an image" width="192"/>
 <!--[if mso]></td></tr></table><![endif]-->
 </div>
 <table border="0" cellpadding="0" cellspacing="0" class="divider" role="presentation" style="table-layout: fixed; vertical-align: top; border-spacing: 0; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; min-width: 100%; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;" valign="top" width="100%">
@@ -393,7 +393,7 @@ if (isset($_GET['deletedFiles']))
 </table>
 <div align="center" class="img-container center fixedwidth" style="padding-right: 0px;padding-left: 0px;">
 <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr style="line-height:0px"><td style="padding-right: 0px;padding-left: 0px;" align="center"><![endif]-->
-<div style="font-size:1px;line-height:40px"> </div><img align="center" alt="Alternate text" border="0" class="center fixedwidth" src="https://yourconference.live/COS/uploads/upload_system_files/vendor/images/afs_Icon.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 100%; max-width: 128px; display: block;" title="Alternate text" width="128"/>
+<div style="font-size:1px;line-height:40px"> </div><img align="center" alt="Alternate text" border="0" class="center fixedwidth" src="<?=base_url?>upload_system_files/vendor/images/ycl_Icon.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 100%; max-width: 128px; display: block;" title="Alternate text" width="128"/>
 <!--[if mso]></td></tr></table><![endif]-->
 </div>
 <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 40px; padding-left: 40px; padding-top: 15px; padding-bottom: 10px; font-family: Tahoma, sans-serif"><![endif]-->
