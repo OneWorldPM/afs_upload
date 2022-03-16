@@ -1,5 +1,5 @@
 <?php
-define("base_url", "https://yourconference.live/COS/uploads/");
+define("base_url", "https://yourconference.live/AFS/uploads/");
 $uploadedFiles = 0;
 $deletedFiles = 0;
 
@@ -170,7 +170,7 @@ if (isset($_GET['deletedFiles']))
 <!--<![endif]-->
 <div align="center" class="img-container center fixedwidth" style="padding-right: 0px;padding-left: 0px;">
 <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr style="line-height:0px"><td style="padding-right: 0px;padding-left: 0px;" align="center"><![endif]-->
-<div style="font-size:1px;line-height:22px"></div><img align="center" alt="I'm an image" border="0" class="center fixedwidth" src="https://yourconference.live/COS/uploads/upload_system_files/vendor/images/cos_banner.jpg" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 100%; display: block;" title="I'm an image" width="288"/>
+<div style="font-size:1px;line-height:22px"></div><img align="center" alt="I'm an image" border="0" class="center fixedwidth" src="https://yourconference.live/AFS/upload/upload_system_files/vendor/images/AFS_Upload_Banner.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 100%; display: block;" title="I'm an image" width="288"/>
 <div style="font-size:1px;line-height:25px"></div>
 <!--[if mso]></td></tr></table><![endif]-->
 </div>

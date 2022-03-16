@@ -341,7 +341,7 @@ class Dashboard extends CI_Controller
         );
         $this->load->library('email', $config);
 
-        $this->email->from('presentations@yourconference.live', 'COS ePoster Submission');
+        $this->email->from('presentations@yourconference.live', 'AFS Presentations Submission');
         $this->email->to($email);
         //$this->email->cc('athullive@gmail.com');
         //$this->email->bcc('them@their-example.com');
