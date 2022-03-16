@@ -162,43 +162,49 @@ class Dashboard extends CI_Controller
     {
 
         $allowed_column_names = array(
-            'A'=>'Abstract.ControlNumber',
-            'B'=>'Topic',
-            'C'=>'Title',
-            'D'=>'Author.FirstName',
-            'E'=>'Author.LastName',
-            'F'=>'Author.Salutation',
-            'G'=>'Author.Email',
-            'H'=>'Primary author',
-            'I'=>'co-authors',
-            'J'=>'AWARD',
-            'K'=>'Presentation.Date',
-            'L'=>'Presentation.StartTime',
-            'M'=>'Presentation.EndTime',
-            'N'=>'Label'
+            'A'=>'Abstract.ID',
+            'B'=>'Session.Name',
+            'C'=>'Session.Full.Name',
+            'D'=>'Presentation.Title',
+            'E'=>'PA.email',
+            'F'=>'Name.Prefix',
+            'G'=>'PA.Firstname',
+            'H'=>'PA.Lastname',
+            'I'=>'Room',
+            'J'=>'Session.Date',
+            'K'=>'Session.Start.Time',
+            'L'=>'Session.End.Time',
+            'M'=>'Presentation.Start.Time',
+
         );
 
         $required_column_names = array(
-            'B'=>'Topic',
-            'C'=>'Title',
-            'D'=>'Author.FirstName',
-            'E'=>'Author.LastName',
-            'G'=>'Author.Email',
-            'N'=>'Label'
+            'B'=>'Session.Name',
+            'C'=>'Session.Full.Name',
+            'D'=>'Presentation.Title',
+            'E'=>'PA.email',
+            'G'=>'PA.Firstname',
+            'H'=>'PA.Lastname',
+            'I'=>'Room',
+            'J'=>'Presentation.Date',
+            'K'=>'Session.Start.Time',
+            'L'=>'Session.End.Time',
+            'M'=>'Presentation.Start.Time',
         );
 
         $param_column_index = array(
             'email'=>'G',
             'name_prefix'=>'F',
-            'first_name'=>'D',
-            'last_name'=>'E',
+            'first_name'=>'G',
+            'last_name'=>'H',
             'session_name'=>'B',
-            'presentation_name'=>'C',
-            'award'=>'J',
-            'presentation_date'=>'K',
-            'start_time'=>'L',
-            'end_time'=>'M',
-             'label'=>'N',
+            'session_full_name'=>'C',
+            'presentation_name'=>'D',
+            'presentation_date'=>'J',
+            'room'=>'I',
+            'session_start_time'=>'K',
+            'session_end_time'=>'L',
+            'presentation_start'=>'M',
         );
 
         $admin_id = $_SESSION['user_id'];
@@ -278,21 +284,10 @@ class Dashboard extends CI_Controller
             $email = str_replace('\'', "\`", $row_columns[$param_column_index['email']]);
             $password = str_replace('\'', "\`", $first_name);
             $session_name = str_replace('\'', "\`", $row_columns[$param_column_index['session_name']]);
+            $session_full_name = str_replace('\'', "\`", $row_columns[$param_column_index['session_full_name']]);
             $presentation_name = str_replace('\'', "\`", $row_columns[$param_column_index['presentation_name']]);
+            $room_name = str_replace('\'', "\`", $row_columns[$param_column_index['room']]);
             $created_date_time = date("Y-m-d H:i:s");
-            $label = str_replace('\'', "\`", $row_columns[$param_column_index['label']]);
-
-            if($label == 'ePoster')
-                $label = '1';
-
-            else if($label == 'Surgical Video')
-                $label = '2';
-
-            else if($label == 'Session Presentation')
-                $label = '3';
-            else{
-                $label = 'null';
-            }
 
             $start_time = 'null';
             $end_time = 'null';
@@ -303,26 +298,26 @@ class Dashboard extends CI_Controller
                 $presentation_date = gmdate('Y-m-d', PHPExcel_Shared_Date::ExcelToPHP(str_replace('\'', "\`", $row_columns[$param_column_index['presentation_date']])));
                 $presentation_date = ($presentation_date == '')? 'null':"'{$presentation_date}'";
             }
-            if(isset($row_columns[$param_column_index['start_time']]))
+
+            if(isset($row_columns[$param_column_index['presentation_start']]))
             {
-                $start_time = gmdate('H:i:s', PHPExcel_Shared_Date::ExcelToPHP(str_replace('\'', "\`", $row_columns[$param_column_index['start_time']])));
+                $presentation_start = gmdate('Y-m-d', PHPExcel_Shared_Date::ExcelToPHP(str_replace('\'', "\`", $row_columns[$param_column_index['presentation_start']])));
+                $presentation_start = ($presentation_start == '')? 'null':"'{$presentation_start}'";
+            }
+
+            if(isset($row_columns[$param_column_index['session_start_time']]))
+            {
+                $start_time = gmdate('H:i:s', PHPExcel_Shared_Date::ExcelToPHP(str_replace('\'', "\`", $row_columns[$param_column_index['session_start_time']])));
                 $start_time = ($start_time == '')?'null': "'{$start_time}'";
-             }
-            if(isset($row_columns[$param_column_index['end_time']]))
+            }
+            if(isset($row_columns[$param_column_index['session_end_time']]))
             {
-                $end_time = gmdate('H:i:s', PHPExcel_Shared_Date::ExcelToPHP(str_replace('\'', "\`", $row_columns[$param_column_index['end_time']])));
+                $end_time = gmdate('H:i:s', PHPExcel_Shared_Date::ExcelToPHP(str_replace('\'', "\`", $row_columns[$param_column_index['session_end_time']])));
                 $end_time = ($end_time == '')?'null': "'{$end_time}'";
 
             }
 
-            $award = 'null';
-            if (isset($row_columns[$param_column_index['award']]))
-            {
-                $award = ucfirst(str_replace('\'', "\`", $row_columns[$param_column_index['award']]));
-                $award = ($award == '')?'null':"'{$award}'";
-            }
-
-            $exists = $this->checkDuplicate($email, $session_name, $presentation_name);
+            $exists = $this->checkDuplicate($email, $session_name, $presentation_name, $room_name);
 
             if ($exists)
             {
@@ -348,9 +343,18 @@ class Dashboard extends CI_Controller
                     {
                         $session_id = $sessionExists;
                     }else{
-                        $this->db->query("INSERT INTO `sessions`(`name`) VALUES ('{$session_name}')");
+                        $this->db->query("INSERT INTO `sessions`(`name`, `full_name`) VALUES ('{$session_name}', '{$session_full_name}')");
                         $session_id = $this->db->insert_id();
                         $this->db->query("INSERT INTO `admin_logs`(`admin_id`, `log_name`, `log_desc`, `ref_presentation_id`, `other_ref`, `date_time`) VALUES ( '{$admin_id}', 'Created session', null, null, '{$session_id}', '{$created_date_time}')");
+                    }
+
+                    $roomExist = $this->checkRoomExist($room_name);
+                    if($roomExist){
+                        $room_id = $roomExist;
+                    }else{
+                        $this->db->query("INSERT INTO `room`(`name`) VALUES ('{$room_name}')");
+                        $room_id = $this->db->insert_id();
+                        $this->db->query("INSERT INTO `admin_logs`(`admin_id`, `log_name`, `log_desc`, `ref_presentation_id`, `other_ref`, `date_time`) VALUES ( '{$admin_id}', 'Created room', null, null, '{$room_id}', '{$created_date_time}')");
                     }
 
                     $presentationExists = $this->checkPresentationExists($presentation_name, $session_id, $presenter_id);
@@ -360,7 +364,7 @@ class Dashboard extends CI_Controller
                         $this->db->query("INSERT INTO `admin_logs`(`admin_id`, `log_name`, `log_desc`, `ref_presentation_id`, `other_ref`, `date_time`) VALUES ( '{$admin_id}', 'Ignored load item', '{$desc}', '{$presentationExists->id}', '{$presentationExists->presenter_id}', '{$created_date_time}')");
                         $duplicateRows = $duplicateRows+1;
                     }else{
-                        $this->db->query("INSERT INTO `presentations`(`name`, `session_id`, `presenter_id`, `created_on`,`award`, `label`, `presentation_date`, `start_time`, `end_time`) VALUES ('{$presentation_name}','{$session_id}','{$presenter_id}','{$created_date_time}',".$award.", '{$label}', ".$presentation_date.", ".$start_time.", ".$end_time.")");
+                        $this->db->query("INSERT INTO `presentations`(`name`, `session_id`, `presenter_id`, `created_on`, `presentation_date`, `start_time`, `end_time`, `room_id`, `presentation_start`) VALUES ('{$presentation_name}','{$session_id}','{$presenter_id}','{$created_date_time}', ".$presentation_date.", ".$start_time.", ".$end_time.", ".$room_id.", ".$presentation_start.")");
                         $presentation_id = $this->db->insert_id();
                         $this->db->query("INSERT INTO `admin_logs`(`admin_id`, `log_name`, `log_desc`, `ref_presentation_id`, `other_ref`, `date_time`) VALUES ( '{$admin_id}', 'Created presentation', null, '{$presentation_id}', null, '{$created_date_time}')");
                         $createdPresentations = $createdPresentations+1;
@@ -398,14 +402,16 @@ class Dashboard extends CI_Controller
         return;
     }
 
-    private function checkDuplicate($email, $session_name, $presentation_name)
+    private function checkDuplicate($email, $session_name, $presentation_name, $room_name)
     {
         $this->db->select('p.presenter_id, pr.id as presentation_id, s.id as session_id')
             ->from('presentations pr')
             ->join('presenter p', "p.presenter_id = pr.presenter_id")
             ->join('sessions s', "s.id = pr.session_id")
+            ->join('room r', 'pr.room_id = r.id')
             ->where('p.email', "$email")
             ->where('s.name', "$session_name")
+            ->where('r.name', "$room_name")
             ->where('pr.name', "$presentation_name");
 
         $result = $this->db->get();
@@ -444,6 +450,19 @@ class Dashboard extends CI_Controller
         return false;
     }
 
+    private function checkRoomExist($room_name){
+        $this->db->select('id')
+            ->from('room')
+            ->where('name', "$room_name");
+
+        $result = $this->db->get();
+
+        if ($result->num_rows() > 0)
+            return $result->row()->id;
+
+        return false;
+    }
+
     private function checkPresentationExists($presentation_name, $session_id, $presenter_id)
     {
         $query = $this->db->query("select id, name, session_id, presenter_id from presentations where name='{$presentation_name}' and session_id='{$session_id}' and presenter_id='{$presenter_id}'");
@@ -471,7 +490,7 @@ class Dashboard extends CI_Controller
             ->join('upload_label l', 'p.label=l.id', 'left')
             ->join('sessions s', 'p.session_id = s.id', 'left')
             ->join('presenter pr', 'p.presenter_id = pr.presenter_id', 'left')
-            ;
+        ;
         $result = $this->db->get();
 
         if($result->num_rows() > 0){
@@ -501,7 +520,7 @@ class Dashboard extends CI_Controller
         $this->db->select('count(*) as count')
             ->from('uploads')
             ->where('presentation_id', $presentation_id)
-            ;
+        ;
         $result = $this->db->get();
         if($result->num_rows() > 0){
             if($result->result()[0]->count <= 0 ){
@@ -514,14 +533,14 @@ class Dashboard extends CI_Controller
     }
 
     public function get_presenter(){
-       $presenters =  $this->db->select('*')
+        $presenters =  $this->db->select('*')
             ->from('presenter')
             ->get();
 
-       if($presenters->num_rows()>0)
-           echo json_encode($presenters->result());
-       else
-           echo json_encode('error');
+        if($presenters->num_rows()>0)
+            echo json_encode($presenters->result());
+        else
+            echo json_encode('error');
     }
 
     public function save_presentation(){
@@ -565,11 +584,11 @@ class Dashboard extends CI_Controller
 
     function checkRoom($room_name){
         $room_exist = $this->db->select('id')->from('room')->like('name', $room_name)->get();
-            if($room_exist->num_rows()>0){
-                return $room_exist->row()->id;
-            }else{
-                return false;
-            }
+        if($room_exist->num_rows()>0){
+            return $room_exist->row()->id;
+        }else{
+            return false;
+        }
     }
 
     function checkSessionExist($session_name, $session_full_name){
@@ -640,7 +659,7 @@ class Dashboard extends CI_Controller
         }
 
         $this->db->where('id', $presentation_id);
-         $this->db->update('presentations', $presentation_field);
+        $this->db->update('presentations', $presentation_field);
         if($this->db->affected_rows()>0){
             echo json_encode('success');
         }else
@@ -649,7 +668,7 @@ class Dashboard extends CI_Controller
     }
 
     public function download_batch_by_presentation($presentation_id, $room_id, $user_id){
-       $uploads = $this->db->select('*')
+        $uploads = $this->db->select('*')
             ->from('uploads')
             ->where('presentation_id', $presentation_id)
             ->where('room_id', $room_id)
@@ -658,26 +677,26 @@ class Dashboard extends CI_Controller
             ->get();
 
 
-       if($uploads->num_rows()>0){
-           echo json_encode(array('msg'=>'success', 'files'=>$uploads->result()));
-       }else{
-           echo json_encode(array('msg'=>'error', 'files'=>$uploads->result()));
-       }
+        if($uploads->num_rows()>0){
+            echo json_encode(array('msg'=>'success', 'files'=>$uploads->result()));
+        }else{
+            echo json_encode(array('msg'=>'error', 'files'=>$uploads->result()));
+        }
     }
 
     public function check_downloaded_uploads($file_id){
-      $downloaded = $this->db->select('*')
+        $downloaded = $this->db->select('*')
             ->from('download_status')
             ->where('uploads_id', $file_id)
             ->where('admin_id',  $_SESSION['user_id'])
             ->where('download_status', 1)
             ->get();
 
-      if($downloaded->num_rows()>0){
-          echo json_encode(array('msg'=>'success', 'status'=>$downloaded->result(), 'file_id'=>$file_id));
-      }else{
-          echo json_encode(array('msg'=>'empty', 'status'=>$downloaded->result(), 'file_id'=>$file_id));
-      }
+        if($downloaded->num_rows()>0){
+            echo json_encode(array('msg'=>'success', 'status'=>$downloaded->result(), 'file_id'=>$file_id));
+        }else{
+            echo json_encode(array('msg'=>'empty', 'status'=>$downloaded->result(), 'file_id'=>$file_id));
+        }
 
     }
 
@@ -753,23 +772,23 @@ class Dashboard extends CI_Controller
         $zipName = 'talks.zip';
 
         if ($zip->open($zipName, ZipArchive::OVERWRITE|ZipArchive::CREATE) !== TRUE) {
-           return array('status'=>'error', 'msg'=>'Something went wrong!');
+            return array('status'=>'error', 'msg'=>'Something went wrong!');
         }
 
 
         foreach ($presentationIds as $presentationId) {
             $result = $this->get_file_path($presentationId);
             if($result){
-            foreach ($result as $index=> $data) {
-                $full_path = FCPATH . $data->file_path;
-                $filename = $data->name;
-                $session_name = $data->session_name;
-                $room_name = $data->room_name;
-                $presentation_day = date('m-d', strtotime($data->presentation_date));
-                $last_name = $data->last_name;
-                $prs = date('H:i', strtotime($data->presentation_start));
-                $presentation_time_dir = str_replace(':','',$prs).'_'.$last_name;
-                $zip->addFile($full_path, $presentation_day.'/'.$room_name.'/'.$session_name .'/'.$presentation_time_dir.'/'.$filename); // to add current file
+                foreach ($result as $index=> $data) {
+                    $full_path = FCPATH . $data->file_path;
+                    $filename = $data->name;
+                    $session_name = $data->session_name;
+                    $room_name = $data->room_name;
+                    $presentation_day = date('m-d', strtotime($data->presentation_date));
+                    $last_name = $data->last_name;
+                    $prs = date('H:i', strtotime($data->presentation_start));
+                    $presentation_time_dir = str_replace(':','',$prs).'_'.$last_name;
+                    $zip->addFile($full_path, $presentation_day.'/'.$room_name.'/'.$session_name .'/'.$presentation_time_dir.'/'.$filename); // to add current file
                 }
             }
         }
@@ -782,21 +801,21 @@ class Dashboard extends CI_Controller
     }
 
     function get_file_path($presentationId){
-            $file_path = $this->db->select('u.file_path, u.name, s.name as session_name, r.name as room_name, p.presentation_date as presentation_date, pr.last_name as last_name, pr.first_name as first_name, p.presentation_start as presentation_start')
-                ->from('uploads u')
-                ->join('presentations p', 'u.presentation_id = p.id', 'left')
-                ->join('sessions s', 'p.session_id = s.id', 'left')
-                ->join('room r', 'u.room_id = r.id', 'left')
-                ->join('presenter pr', 'u.presenter_id = pr.presenter_id', 'left')
-                ->where('u.deleted', '0')
-                ->where('u.presentation_id', $presentationId)
-                ->get();
+        $file_path = $this->db->select('u.file_path, u.name, s.name as session_name, r.name as room_name, p.presentation_date as presentation_date, pr.last_name as last_name, pr.first_name as first_name, p.presentation_start as presentation_start')
+            ->from('uploads u')
+            ->join('presentations p', 'u.presentation_id = p.id', 'left')
+            ->join('sessions s', 'p.session_id = s.id', 'left')
+            ->join('room r', 'u.room_id = r.id', 'left')
+            ->join('presenter pr', 'u.presenter_id = pr.presenter_id', 'left')
+            ->where('u.deleted', '0')
+            ->where('u.presentation_id', $presentationId)
+            ->get();
 
-            if($file_path->num_rows()>0){
-                return $file_path->result();
-            }else{
-                return false;
-            }
+        if($file_path->num_rows()>0){
+            return $file_path->result();
+        }else{
+            return false;
+        }
     }
 
 }
