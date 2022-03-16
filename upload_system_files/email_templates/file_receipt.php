@@ -1,5 +1,5 @@
 <?php
-define("base_url", "https://yourconference.live/AFS/uploads/");
+define("base_url", "https://yourconference.live/AFS/upload/");
 $uploadedFiles = 0;
 $deletedFiles = 0;
 
