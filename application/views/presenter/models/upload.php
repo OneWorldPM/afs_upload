@@ -183,7 +183,7 @@
         uploadDropzone = new Dropzone("#dropzone form",
             {
                 url: "<?=base_url('dashboard/uploadFile')?>",
-                acceptedFiles: ".ppt, .pptx, .mp4, .mp3, .mv4, .mpg",
+                acceptedFiles: ".ppt, .pptx, .mp4, .mp3, .mv4, .mpg, .pdf",
                 addRemoveLinks: false,
                 maxFilesize: 2000,
                 init: function() {
