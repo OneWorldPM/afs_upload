@@ -193,7 +193,7 @@ class Dashboard extends CI_Controller
         );
 
         $param_column_index = array(
-            'email'=>'G',
+            'email'=>'E',
             'name_prefix'=>'F',
             'first_name'=>'G',
             'last_name'=>'H',
