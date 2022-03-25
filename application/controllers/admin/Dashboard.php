@@ -536,6 +536,7 @@ class Dashboard extends CI_Controller
     public function get_presenter(){
         $presenters =  $this->db->select('*')
             ->from('presenter')
+            ->order_by('first_name', 'asc')
             ->get();
 
         if($presenters->num_rows()>0)
