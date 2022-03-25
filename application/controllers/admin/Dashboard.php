@@ -292,6 +292,7 @@ class Dashboard extends CI_Controller
             $start_time = 'null';
             $end_time = 'null';
             $presentation_date = 'null';
+            $presentation_start = 'null';
 
             if(isset($row_columns[$param_column_index['presentation_date']]))
             {
@@ -301,7 +302,7 @@ class Dashboard extends CI_Controller
 
             if(isset($row_columns[$param_column_index['presentation_start']]))
             {
-                $presentation_start = gmdate('Y-m-d', PHPExcel_Shared_Date::ExcelToPHP(str_replace('\'', "\`", $row_columns[$param_column_index['presentation_start']])));
+                $presentation_start = gmdate('H:i:s', PHPExcel_Shared_Date::ExcelToPHP(str_replace('\'', "\`", $row_columns[$param_column_index['presentation_start']])));
                 $presentation_start = ($presentation_start == '')? 'null':"'{$presentation_start}'";
             }
 
