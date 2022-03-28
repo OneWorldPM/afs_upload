@@ -25,7 +25,16 @@
                 <tr>
                     <!--                    <th>Select All</th>-->
                     <!--                    <th><input type="checkbox" name="check" id="checkAllPresentation">Select All</th>-->
-                    <th>Status</th>
+                    <th>Status<br> <select class="filter-status" style="width:100px" >
+                            <option value=""></option>
+                            <?php if(isset($new_uploads) && !empty($new_uploads)):?>
+                                <option value="new-uploads" presentation-ids="<?=$new_uploads?>">New Uploads</option>
+                            <?php else: ?>
+                                <option value="new-uploads" presentation-ids="">New Uploads</option>
+                            <?php endif; ?>
+                            <option value="active">Active</option>
+                            <option value="disabled">Disabled</option>
+                        </select></th>
                     <th>ID</th>
                     <th>Assigned ID</th>
                     <th style=" white-space: nowrap ">Session Date</th>
@@ -45,69 +54,6 @@
                 <!-- Will be filled by JQuery AJAX -->
                 </tbody>
 
-                <tfoot>
-                <tr>
-                    <td>
-                        <select class="filter-status" >
-                            <option value=""></option>
-                            <?php if(isset($new_uploads) && !empty($new_uploads)):?>
-                                    <option value="new-uploads" presentation-ids="<?=$new_uploads?>">New Uploads</option>
-                            <?php else: ?>
-                                <option value="new-uploads" presentation-ids="">New Uploads</option>
-                            <?php endif; ?>
-                            <option value="active">Active</option>
-                            <option value="disabled">Disabled</option>
-                        </select>
-                    </td>
-                    <td></td>
-                    <td>
-                        <select class="filter-select" >
-                            <option value=""></option>
-                            <?php if(isset($assigned_ids) && !empty($assigned_ids)):?>
-                            <?php foreach ($assigned_ids as $assigned_id) :?>
-                                <option value="<?=($assigned_id)?>"><?=($assigned_id)?></option>
-                            <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
-                    </td>
-                    <td>
-                        <select class="filter-select" >
-                            <option value=""></option>
-                            <?php if(isset($session_dates) && !empty($session_dates)):?>
-                            <?php foreach ($session_dates as $session_date) :?>
-                                <option value="<?=($session_date)?>"><?=($session_date)?></option>
-                            <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <select class="filter-select" style="max-width: 200px !important;" >
-                            <option value=""></option>
-                            <?php if(isset($session_names) && !empty($session_names)):?>
-                            <?php foreach ($session_names as $session_name) :?>
-                                <option value="<?=($session_name)?>"><?=($session_name)?></option>
-                            <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
-                    </td>
-                    <td>
-                        <select class="filter-select" style="max-width: 200px !important;" >
-                            <option value=""></option>
-                            <?php if(isset($presentation_titles) && !empty($presentation_titles)):?>
-                            <?php foreach ($presentation_titles as $presentation_title) :?>
-                                <option value="<?=($presentation_title)?>"><?=($presentation_title)?></option>
-                            <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                </tfoot>
             </table>
         </div>
 
@@ -341,127 +287,129 @@
 
     } );
 
-    function loadPresentations() {
-
-        $('#presentationTable thead th').each(function(i) {
-            let $this = $(this).text();
-
-            if (!($this == 'Actions' || $this== 'Status' || $this== 'Select All' || $this== 'Info' || $this== 'ID'))
-                $(this).html($(this).text()+'<br><input class="filter_'+i+'" type="text" placeholder="Search '+$(this).text()+'" style="width: inherit;background: white;color: black;border: 1px solid #666;"/><br><input type="button" value="Clear" class="clear-filter btn btn-sm btn-warning" style="width: 80%; height: 20px; padding-top: 0" id="clear-filter" input-index="'+i+'"/>');
-            // <br><input type="button" value="Clear" class="clear-filter btn btn-sm btn-warning" style="width: 80%; height: 20px; padding-top: 0"/>
-            // <button class="clear-filter badge badge-warning badge-sm mr-2 float-left " style="width: 100%;" id="clear-filter" input-index="'+i+'"><i class="fas fa-eraser"></i> Clear</button>
-        });
-        $('#presentationTable tfoot td').each(function(i) {
-            let $this = $(this).text();
-
-            if (!($this == 'Actions' || $this== 'Status' || $this== 'Select All' || $this== 'Info' || $this== 'ID'))
-                $(this).attr('input-index', i);
-                $(this).find('select').addClass('filter-select_'+i)
-        });
-
-        if ( $.fn.DataTable.isDataTable('#presentationTable') ) {
-            $('#presentationTable').DataTable().destroy();
-
-            selectPresentationRow();
-        }
-
-        let presentation_ids = [];
-        presentationDt = $('#presentationTable')
-            .DataTable(
-                {
-                    "dom": "<'row'<'col-sm-12 col-md-8'l><'#logsTableBtns.col-sm-12 col-md-4 text-right'B>>" +
-                        "<'row'<'col-sm-12'tr>>" +
-                        "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-                    "serverSide": true,
-                    "processing": true,
-                    lengthMenu: [5, 10, 20, 50, 100, 200],
-                    "iDisplayLength": 200,
-                    "ajax":
-                        {
-                            "url": "<?=base_url()?>admin/dashboard/getPresentationsDt",
-                            "type": "POST"
-                        },
-
-                    "columns":
-                        [
-
-                            { "name": "new-uploads", "data": null, render: function(presentation, type, row, meta) {
-                                    getUndownloadedData(presentation.id, presentation.uploadStatus);
-
-                                    let statusBadge = (presentation.uploadStatus)?'<span class="badge badge-success mr-1"><i class="fas fa-check-circle"></i> '+presentation.uploadStatus+' File(s) uploaded</span>':'<span class="badge badge-warning mr-1"><i class="fas fa-exclamation-circle"></i> No Uploads</span>';
-                                    statusBadge += (presentation.active==1)?'<span class="active-status badge badge-success" presentation-id="'+presentation.id+'"><i class="fas fa-check"></i> Active</span>':'<span class="disabled-status badge badge-danger" presentation-id="'+presentation.id+'"><i class="fas fa-times"></i> Disabled</span>';
-                                    statusBadge += '<span  id="undownloadedFileCount_'+presentation.id+'" style="display: none; margin-top:4px; "></span>';
-
-                                    return  statusBadge;
-                                }
-                            },
-
-                            { "name": "p.id", "data": "id"},
-                            { "name": "p.assigned_id", "data": "assigned_id"},
-                            { "name": "p.presentation_date", "data": "presentation_date", "width": "105px" },
-                            { "name": "p.presentation_start", "data": "presentation_start" },
-                            { "name": "rm.name", "data": "room_name" },
-                            { "name": "s.name", "data": "session_name" },
-                            { "name": "p.name", "data": "name" },
-                            { "name": "pr.first_name", "data": "first_name" },
-                            { "name": "pr.last_name", "data": "last_name" },
-                            { "name": "pr.email", "data": "email" },
-                            { "action": "action", "data": null, render: function(presentation, type, row, meta) {
-                                    let filesBtn = '<button class="files-btn btn btn-sm btn-info text-white" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="'+presentation.presenter_id+'" presentation-id="'+presentation.id+'" room_id="'+presentation.room_id+'" room_name="'+presentation.room_name+'" presentation_date="'+presentation.presentation_date+'"><i class="fas fa-folder-open"></i> Files</button>';
-                                    let logsBtn = '<button class="presentation-logs-btn btn btn-sm btn-warning text-white mt-1" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="'+presentation.presenter_id+'" presentation-id="'+presentation.id+'" room_name="'+presentation.room_name+'" presentation_date="'+presentation.presentation_date+'"><i class="fas fa-history"></i> Logs</button>';
-
-                                    return filesBtn+' '+logsBtn;
-                                }
-                            },
-                            { "action": "action", "data": null, render: function(presentation, type, row, meta) {
-                                    let editBtn = '<button class="edit-presentation-btn btn btn-sm btn-primary text-white" presentation-id="'+presentation.id+'"   user-id="'+presentation.presenter_id+'"  room_id="'+presentation.room_id+'" upload-status="'+presentation.uploadStatus+'"><i class="fas fa-edit"></i> Edit</button>';
-                                    let disableBtn = (presentation.active==0)?'<button class="activate-presentation-btn btn btn-sm btn-success text-white mt-1" presentation-id="'+presentation.id+'"><i class="fas fa-check"></i> Activate</button>':'<button class="disable-presentation-btn btn btn-sm btn-danger text-white mt-1" presentation-id="'+presentation.id+'"><i class="fas fa-times"></i> Disable</button>';
-
-                                    return editBtn+' '+disableBtn;
-                                }
-                            },
-
-                        ],
-                    "paging": true,
-                    "lengthChange": true,
-                    "searching": true,
-                    "ordering": true,
-                    "info": true,
-                    "autoWidth": false,
-                    "responsive": false,
-                    "createdRow": function(row, data, dataIndex){
-                        $(row).attr('id', data.id);
-                    },
-                    "rowCallback": function( row, data ) {
-                        if (selected.includes(parseInt(data.id))) {
-                            $(row).addClass('selected');
-                        }
-                    },
-                    "order": [[ 3, "ASC" ]],
-
-
-                    initComplete: function(settings, json) {
-                        var api = this.api();
-                        // Apply the search
-                        arr = ['2','3','4','5','6','7','8','9','10'];
-                        api.columns(arr).every(function() {
-                            var that = this;
-                            $('input', this.header()).on('keyup change', function() {
-                                if (that.search() !== this.value) {
-                                    that.search(this.value).draw();
-                                }
-                            });
-                        });
-                        $('[data-toggle="tooltip"]').tooltip();
-                    },
-                    "drawCallback": function(settings) {
-                        allFiltered = this.api().ajax.json().total_filtered;
-                    }
-
-                });
-        selectPresentationRow();
-
-    }
+    //function loadPresentations2() {
+    //
+    //    $('#searchAllInput').on( 'keyup', function () {
+    //        presentationDt.search( this.value ).draw();
+    //    } );
+    //
+    //    $('#presentationTable thead th').each(function(i) {
+    //        let $this = $(this).text();
+    //
+    //        if (!($this == 'Actions' || $this== 'Status' || $this== 'Select All' || $this== 'Info' || $this== 'ID'))
+    //            $(this).html($(this).text()+'<br><input class="filter_'+i+'" type="text" placeholder="Search '+$(this).text()+'" style="width: inherit;background: white;color: black;border: 1px solid #666;"/><br><input type="button" value="Clear" class="clear-filter btn btn-sm btn-warning" style="width: 80%; height: 20px; padding-top: 0" id="clear-filter" input-index="'+i+'"/>');
+    //        // <br><input type="button" value="Clear" class="clear-filter btn btn-sm btn-warning" style="width: 80%; height: 20px; padding-top: 0"/>
+    //        // <button class="clear-filter badge badge-warning badge-sm mr-2 float-left " style="width: 100%;" id="clear-filter" input-index="'+i+'"><i class="fas fa-eraser"></i> Clear</button>
+    //    });
+    //    $('#presentationTable tfoot td').each(function(i) {
+    //        let $this = $(this).text();
+    //
+    //        if (!($this == 'Actions' || $this== 'Status' || $this== 'Select All' || $this== 'Info' || $this== 'ID'))
+    //            $(this).attr('input-index', i);
+    //            $(this).find('select').addClass('filter-select_'+i)
+    //    });
+    //
+    //    if ( $.fn.DataTable.isDataTable('#presentationTable') ) {
+    //        $('#presentationTable').DataTable().destroy();
+    //
+    //        selectPresentationRow();
+    //    }
+    //
+    //    let presentation_ids = [];
+    //    presentationDt = $('#presentationTable')
+    //        .DataTable(
+    //            {
+    //
+    //                "serverSide": true,
+    //                "processing": true,
+    //                lengthMenu: [5, 10, 20, 50, 100, 200],
+    //                "iDisplayLength": 200,
+    //                "ajax":
+    //                    {
+    //                        "url": "<?//=base_url()?>//admin/dashboard/getPresentationsDt",
+    //                        "type": "POST"
+    //                    },
+    //
+    //                "columns":
+    //                    [
+    //
+    //                        { "name": "new-uploads", "data": null, render: function(presentation, type, row, meta) {
+    //                                getUndownloadedData(presentation.id, presentation.uploadStatus);
+    //
+    //                                let statusBadge = (presentation.uploadStatus)?'<span class="badge badge-success mr-1"><i class="fas fa-check-circle"></i> '+presentation.uploadStatus+' File(s) uploaded</span>':'<span class="badge badge-warning mr-1"><i class="fas fa-exclamation-circle"></i> No Uploads</span>';
+    //                                statusBadge += (presentation.active==1)?'<span class="active-status badge badge-success" presentation-id="'+presentation.id+'"><i class="fas fa-check"></i> Active</span>':'<span class="disabled-status badge badge-danger" presentation-id="'+presentation.id+'"><i class="fas fa-times"></i> Disabled</span>';
+    //                                statusBadge += '<span  id="undownloadedFileCount_'+presentation.id+'" style="display: none; margin-top:4px; "></span>';
+    //
+    //                                return  statusBadge;
+    //                            }
+    //                        },
+    //
+    //                        { "name": "p.id", "data": "id"},
+    //                        { "name": "p.assigned_id", "data": "assigned_id"},
+    //                        { "name": "p.presentation_date", "data": "presentation_date", "width": "105px" },
+    //                        { "name": "p.presentation_start", "data": "presentation_start" },
+    //                        { "name": "rm.name", "data": "room_name" },
+    //                        { "name": "s.name", "data": "session_name" },
+    //                        { "name": "p.name", "data": "name" },
+    //                        { "name": "pr.first_name", "data": "first_name" },
+    //                        { "name": "pr.last_name", "data": "last_name" },
+    //                        { "name": "pr.email", "data": "email" },
+    //                        { "action": "action", "data": null, render: function(presentation, type, row, meta) {
+    //                                let filesBtn = '<button class="files-btn btn btn-sm btn-info text-white" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="'+presentation.presenter_id+'" presentation-id="'+presentation.id+'" room_id="'+presentation.room_id+'" room_name="'+presentation.room_name+'" presentation_date="'+presentation.presentation_date+'"><i class="fas fa-folder-open"></i> Files</button>';
+    //                                let logsBtn = '<button class="presentation-logs-btn btn btn-sm btn-warning text-white mt-1" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="'+presentation.presenter_id+'" presentation-id="'+presentation.id+'" room_name="'+presentation.room_name+'" presentation_date="'+presentation.presentation_date+'"><i class="fas fa-history"></i> Logs</button>';
+    //
+    //                                return filesBtn+' '+logsBtn;
+    //                            }
+    //                        },
+    //                        { "action": "action", "data": null, render: function(presentation, type, row, meta) {
+    //                                let editBtn = '<button class="edit-presentation-btn btn btn-sm btn-primary text-white" presentation-id="'+presentation.id+'"   user-id="'+presentation.presenter_id+'"  room_id="'+presentation.room_id+'" upload-status="'+presentation.uploadStatus+'"><i class="fas fa-edit"></i> Edit</button>';
+    //                                let disableBtn = (presentation.active==0)?'<button class="activate-presentation-btn btn btn-sm btn-success text-white mt-1" presentation-id="'+presentation.id+'"><i class="fas fa-check"></i> Activate</button>':'<button class="disable-presentation-btn btn btn-sm btn-danger text-white mt-1" presentation-id="'+presentation.id+'"><i class="fas fa-times"></i> Disable</button>';
+    //
+    //                                return editBtn+' '+disableBtn;
+    //                            }
+    //                        },
+    //
+    //                    ],
+    //                "paging": true,
+    //                "lengthChange": true,
+    //                "searching": true,
+    //                "ordering": true,
+    //                "info": true,
+    //                "autoWidth": false,
+    //                "responsive": false,
+    //                "createdRow": function(row, data, dataIndex){
+    //                    $(row).attr('id', data.id);
+    //                },
+    //                "rowCallback": function( row, data ) {
+    //                    if (selected.includes(parseInt(data.id))) {
+    //                        $(row).addClass('selected');
+    //                    }
+    //                },
+    //                "order": [[ 3, "ASC" ]],
+    //
+    //
+    //                initComplete: function(settings, json) {
+    //                    var api = this.api();
+    //                    // Apply the search
+    //                    arr = ['2','3','4','5','6','7','8','9','10'];
+    //                    api.columns(arr).every(function() {
+    //                        var that = this;
+    //                        $('input', this.header()).on('keyup change', function() {
+    //                            if (that.search() !== this.value) {
+    //                                that.search(this.value).draw();
+    //                            }
+    //                        });
+    //                    });
+    //                    $('[data-toggle="tooltip"]').tooltip();
+    //                },
+    //                "drawCallback": function(settings) {
+    //                    allFiltered = this.api().ajax.json().total_filtered;
+    //                }
+    //
+    //            });
+    //    selectPresentationRow();
+    //
+    //}
 
 
     function selectPresentationRow(){
@@ -493,12 +441,13 @@
 
 
 
-    function loadPresentations2() {
+    function loadPresentations() {
         $.get( "<?=base_url('admin/dashboard/getPresentationList')?>", function(response) {
             response = JSON.parse(response);
 
             if ( $.fn.DataTable.isDataTable('#presentationTable') ) {
                 $('#presentationTable').DataTable().destroy();
+                selectPresentationRow();
             }
 
             $('#presentationTableBody').html('');
@@ -531,17 +480,18 @@
 
                 $('#presentationTableBody').append('' +
                     '<tr>\n' +
-                    '<td>'+presentationCheckbox+'</td>' +
                     '  <td>\n' +
                     '    '+statusBadge+'\n' +
                     '  </td>\n' +
                     '  <td>'+presentation.id+'</td>\n' +
+                    '  <td>'+presentation.assigned_id+'</td>\n' +
                     '  <td style="white-space: nowrap">'+presentation_date+'<br>'+presentation_time+'</td>\n' +
                     '  <td style="white-space: nowrap">'+convertTime(presentation.presentation_start)+'</td>\n' +
                     '  <td>'+presentation.room_name+'</td>\n' +
                     '  <td>'+presentation.session_name+'</td>\n' +
                     '  <td>'+presentation.name+'</td>\n' +
-                    '  <td>'+presentation.presenter_name+'</td>\n' +
+                    '  <td>'+presentation.first_name+'</td>\n' +
+                    '  <td>'+presentation.last_name+'</td>\n' +
                     '  <td style="width: 200px !important; word-break:break-word">'+presentation.email+'</td>\n' +
                     '  <td>\n' +
                     '    '+filesBtn+'\n' +
@@ -554,7 +504,10 @@
                     '</tr>');
             });
 
-            $('#presentationTable').DataTable({
+            presentationDt = $('#presentationTable')
+                .DataTable({
+                    lengthMenu: [[5, 25, 50, 250, -1], [5, 25, 50, 250, "All"]],
+                    "iDisplayLength": 200,
                 initComplete: function() {
                     $('#presentationTable_filter').find('input').attr('autocomplete', 'off');
                     $('#presentationTable_filter').find('input').attr('type', 'text');
@@ -571,6 +524,8 @@
                 $('#sessionsTable').DataTable();
                 toastr.error("Unable to load your presentations data");
             });
+
+        selectPresentationRow();
     }
 
     function getUndownloadedData(presentation, upload_status){

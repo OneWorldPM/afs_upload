@@ -59,7 +59,7 @@ class Dashboard extends CI_Controller
     public function getPresentationList()
     {
 
-        $this->db->select("p.*, s.name as session_name,s.id as session_id, pr.presenter_id, CONCAT(pr.first_name, ' ', pr.last_name) as presenter_name, pr.email as email, rm.name as room_name, rm.id as room_id");
+        $this->db->select("p.*, s.name as session_name,s.id as session_id, pr.presenter_id, CONCAT(pr.first_name, ' ', pr.last_name) as presenter_name, pr.first_name, pr.last_name, pr.email as email, rm.name as room_name, rm.id as room_id");
         $this->db->from('presentations p');
         $this->db->join('sessions s', 's.id = p.session_id');
         $this->db->join('presenter pr', 'pr.presenter_id = p.presenter_id');
