@@ -22,12 +22,14 @@ class Dashboard extends CI_Controller
         $session_dates = array();
         $session_names = array();
         $presentation_titles = array();
-        foreach ($data['presentations'] as $presentation){
-            if($presentation->assigned_id !== null){
-                $assigned_ids[] = $presentation->assigned_id;
-                $session_dates[] = $presentation->presentation_date;
-                $session_names[] = $presentation->session_name;
-                $presentation_titles[] = $presentation->name;
+        if($data['presentations']) {
+            foreach ($data['presentations'] as $presentation) {
+                if ($presentation->assigned_id !== null) {
+                    $assigned_ids[] = $presentation->assigned_id;
+                    $session_dates[] = $presentation->presentation_date;
+                    $session_names[] = $presentation->session_name;
+                    $presentation_titles[] = $presentation->name;
+                }
             }
         }
 
