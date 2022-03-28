@@ -507,7 +507,7 @@
             presentationDt = $('#presentationTable')
                 .DataTable({
                     lengthMenu: [[5, 25, 50, 250, -1], [5, 25, 50, 250, "All"]],
-                    "iDisplayLength": 200,
+                    "iDisplayLength": -1,
                 initComplete: function() {
                     $('#presentationTable_filter').find('input').attr('autocomplete', 'off');
                     $('#presentationTable_filter').find('input').attr('type', 'text');
