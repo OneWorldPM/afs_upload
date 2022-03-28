@@ -16,9 +16,35 @@ class Dashboard extends CI_Controller
 
     public function index()
     {
+        $data['presentations'] = $this->getPresentationListArray();
+        $data['new_uploads'] = $this->getAllPresentationsWithNewUploads();
+        $assigned_ids = array();
+        $session_dates = array();
+        $session_names = array();
+        $presentation_titles = array();
+        foreach ($data['presentations'] as $presentation){
+            if($presentation->assigned_id !== null){
+                $assigned_ids[] = $presentation->assigned_id;
+                $session_dates[] = $presentation->presentation_date;
+                $session_names[] = $presentation->session_name;
+                $presentation_titles[] = $presentation->name;
+            }
+        }
+
+         array_multisort($assigned_ids, $session_dates, $session_names, $presentation_titles, SORT_ASC);
+        $session_dates = array_unique($session_dates);
+        $session_names = array_unique($session_names);
+        $presentation_titles = array_unique($presentation_titles);
+        asort($presentation_titles);
+        asort($session_names);
+        asort($session_dates);
+        $data['assigned_ids'] = $assigned_ids;
+        $data['session_dates'] = $session_dates;
+        $data['session_names'] = $session_names;
+        $data['presentation_titles'] = $presentation_titles;
         $this->load->view('admin/head');
 
-        $this->load->view('admin/dashboard');
+        $this->load->view('admin/dashboard', $data);
 
         $this->load->view('admin/models/change-password');
         $this->load->view('admin/models/files');
@@ -100,7 +126,7 @@ class Dashboard extends CI_Controller
         $this->db->select('*');
         $this->db->from('uploads');
         $this->db->where('id', $file_id);
-        $this->db->where('deleted', 0);
+        //$this->db->where('deleted', 0);
 
         $result = $this->db->get();
 
@@ -162,49 +188,50 @@ class Dashboard extends CI_Controller
     {
 
         $allowed_column_names = array(
-            'A'=>'Abstract.ID',
-            'B'=>'Session.Name',
-            'C'=>'Session.Full.Name',
-            'D'=>'Presentation.Title',
-            'E'=>'PA.email',
-            'F'=>'Name.Prefix',
-            'G'=>'PA.Firstname',
-            'H'=>'PA.Lastname',
-            'I'=>'Room',
-            'J'=>'Session.Date',
-            'K'=>'Session.Start.Time',
-            'L'=>'Session.End.Time',
-            'M'=>'Presentation.Start.Time',
-
+            'A'=>'Assigned.ID',
+            'B'=>'Abstract.ID',
+            'C'=>'Session.Name',
+            'D'=>'Session.Full.Name',
+            'E'=>'Presentation.Title',
+            'F'=>'PA.email',
+            'G'=>'Name.Prefix',
+            'H'=>'PA.Firstname',
+            'I'=>'PA.Lastname',
+            'J'=>'Room',
+            'K'=>'Session.Date',
+            'L'=>'Session.Start.Time',
+            'M'=>'Session.End.Time',
+            'N'=>'Presentation.Start.Time',
         );
 
         $required_column_names = array(
-            'B'=>'Session.Name',
-            'C'=>'Session.Full.Name',
-            'D'=>'Presentation.Title',
-            'E'=>'PA.email',
-            'G'=>'PA.Firstname',
-            'H'=>'PA.Lastname',
-            'I'=>'Room',
-            'J'=>'Presentation.Date',
-            'K'=>'Session.Start.Time',
-            'L'=>'Session.End.Time',
-            'M'=>'Presentation.Start.Time',
+            'C'=>'Session.Name',
+            'D'=>'Session.Full.Name',
+            'E'=>'Presentation.Title',
+            'F'=>'PA.email',
+            'H'=>'PA.Firstname',
+            'I'=>'PA.Lastname',
+            'J'=>'Room',
+//            'J'=>'Presentation.Date',
+//            'K'=>'Session.Start.Time',
+//            'L'=>'Session.End.Time',
+//            'M'=>'Presentation.Start.Time',
         );
 
         $param_column_index = array(
-            'email'=>'E',
-            'name_prefix'=>'F',
-            'first_name'=>'G',
-            'last_name'=>'H',
-            'session_name'=>'B',
-            'session_full_name'=>'C',
-            'presentation_name'=>'D',
-            'presentation_date'=>'J',
-            'room'=>'I',
-            'session_start_time'=>'K',
-            'session_end_time'=>'L',
-            'presentation_start'=>'M',
+            'assigned_id'=>'A',
+            'email'=>'F',
+            'name_prefix'=>'G',
+            'first_name'=>'H',
+            'last_name'=>'I',
+            'session_name'=>'C',
+            'session_full_name'=>'D',
+            'presentation_name'=>'E',
+            'presentation_date'=>'K',
+            'room'=>'J',
+            'session_start_time'=>'L',
+            'session_end_time'=>'M',
+            'presentation_start'=>'N',
         );
 
         $admin_id = $_SESSION['user_id'];
@@ -292,6 +319,7 @@ class Dashboard extends CI_Controller
             $start_time = 'null';
             $end_time = 'null';
             $presentation_date = 'null';
+            $assigned_id = 'null';
             $presentation_start = 'null';
 
             if(isset($row_columns[$param_column_index['presentation_date']]))
@@ -315,7 +343,12 @@ class Dashboard extends CI_Controller
             {
                 $end_time = gmdate('H:i:s', PHPExcel_Shared_Date::ExcelToPHP(str_replace('\'', "\`", $row_columns[$param_column_index['session_end_time']])));
                 $end_time = ($end_time == '')?'null': "'{$end_time}'";
+            }
 
+            if(isset($row_columns[$param_column_index['assigned_id']]))
+            {
+                $assigned_id = (str_replace('\'', "\`", $row_columns[$param_column_index['assigned_id']]));
+                $assigned_id = ($assigned_id == '')?'null': "'{$assigned_id}'";
             }
 
             $exists = $this->checkDuplicate($email, $session_name, $presentation_name, $room_name);
@@ -365,7 +398,7 @@ class Dashboard extends CI_Controller
                         $this->db->query("INSERT INTO `admin_logs`(`admin_id`, `log_name`, `log_desc`, `ref_presentation_id`, `other_ref`, `date_time`) VALUES ( '{$admin_id}', 'Ignored load item', '{$desc}', '{$presentationExists->id}', '{$presentationExists->presenter_id}', '{$created_date_time}')");
                         $duplicateRows = $duplicateRows+1;
                     }else{
-                        $this->db->query("INSERT INTO `presentations`(`name`, `session_id`, `presenter_id`, `created_on`, `presentation_date`, `start_time`, `end_time`, `room_id`, `presentation_start`) VALUES ('{$presentation_name}','{$session_id}','{$presenter_id}','{$created_date_time}', ".$presentation_date.", ".$start_time.", ".$end_time.", ".$room_id.", ".$presentation_start.")");
+                        $this->db->query("INSERT INTO `presentations`(`name`, `session_id`, `presenter_id`, `created_on`, `presentation_date`, `start_time`, `end_time`, `room_id`, `presentation_start`, `assigned_id`) VALUES ('{$presentation_name}','{$session_id}','{$presenter_id}','{$created_date_time}', ".$presentation_date.", ".$start_time.", ".$end_time.", ".$room_id.", ".$presentation_start.", ".$assigned_id.")");
                         $presentation_id = $this->db->insert_id();
                         $this->db->query("INSERT INTO `admin_logs`(`admin_id`, `log_name`, `log_desc`, `ref_presentation_id`, `other_ref`, `date_time`) VALUES ( '{$admin_id}', 'Created presentation', null, '{$presentation_id}', null, '{$created_date_time}')");
                         $createdPresentations = $createdPresentations+1;
@@ -536,7 +569,6 @@ class Dashboard extends CI_Controller
     public function get_presenter(){
         $presenters =  $this->db->select('*')
             ->from('presenter')
-            ->order_by('first_name', 'asc')
             ->get();
 
         if($presenters->num_rows()>0)
@@ -556,7 +588,7 @@ class Dashboard extends CI_Controller
             'end_time'=> $post['session_end'],
             'created_on'=> date('Y-m-d H:i:s'),
             'presentation_start'=> date($post['presentation_start']),
-
+            'assigned_id'=> ($post['assigned_id']),
         );
 
         if ($this->checkRoom($post['room_name'])){
@@ -642,6 +674,7 @@ class Dashboard extends CI_Controller
             'presentation_start'=>$post['presentation_start'],
             'start_time'=>$post['session_start'],
             'end_time'=>$post['session_end'],
+            'assigned_id'=> ($post['assigned_id']),
         );
 
 
@@ -753,6 +786,43 @@ class Dashboard extends CI_Controller
 
     }
 
+    function getUploadsCountDt($presentation_id)
+    {
+        $data = $this->db->select('*')
+            ->from('uploads')
+            ->where('deleted', 0)
+            ->where('presentation_id', $presentation_id)
+            ->get();
+
+        if (COUNT($data->result())) {
+            $uploadsCount = COUNT($data->result());
+            $downloadsCount = $this->getDownloadsCount($presentation_id);
+            $undownloadedFile = $uploadsCount - $downloadsCount;
+
+            if ($uploadsCount > 0) {
+                return $undownloadedFile;
+            }
+        }
+        return '';
+    }
+
+    function getAllPresentationsWithNewUploads()
+    {
+        $data = $this->db->select('*')
+            ->from('uploads')
+            ->where('deleted', 0)
+            ->get();
+        $array = array();
+        foreach ($data->result() as $upload_data){
+                $downloadsCount = $this->getDownloadsCount($upload_data->presentation_id);
+                if(COUNT($upload_data) > $downloadsCount){
+                    $array[] = $upload_data->presentation_id;
+            }
+        }
+        return (implode('-',$array));
+
+    }
+
     public function download_checked_presentation_zip(){
         $presentationIds = $this->input->post('checkedPresentationIds');
         if(!$presentationIds){
@@ -817,6 +887,125 @@ class Dashboard extends CI_Controller
             return $file_path->result();
         }else{
             return false;
+        }
+    }
+
+    public function getPresentationsDt(){
+        $post = $this->input->post();
+
+        $this->db->select("p.*, s.name as session_name,s.id as session_id, pr.presenter_id,
+         pr.first_name as first_name, pr.last_name as last_name, pr.email as email, rm.name as room_name, 
+         rm.id as room_id, p.id as presentation_id, p.assigned_id as assigned_id");
+        $this->db->from('presentations p');
+        $this->db->join('sessions s', 's.id = p.session_id');
+        $this->db->join('presenter pr', 'pr.presenter_id = p.presenter_id');
+        $this->db->join('room rm', 'p.room_id = rm.id');
+
+        $tempDbObj = clone $this->db;
+        $total_results = $tempDbObj->count_all_results();
+
+        foreach ($post['columns'] as $column){
+            if ($column['search']['value']!='' && $column['search']['value']!= 'on' && $column['search']['value']!= 'active'  && $column['search']['value']!= 'disabled'  && $column['name'] != 'new-uploads')
+                $this->db->like($column['name'], $column['search']['value']);
+
+            if($column['search']['value']== 'active')
+                $this->db->where('active',  '1');
+
+            if($column['search']['value']== 'disabled')
+                $this->db->where('active',  '0');
+
+            if($column['search']['value'] != '' && $column['name']=='new-uploads'){
+                $searcValue = explode('-',$column['search']['value']);
+                $this->db->or_where_in('p.id', $searcValue);
+            }
+        }
+
+        $tempDbObj = clone $this->db;
+        $total_filtered_results = $tempDbObj->count_all_results();
+        $tempDbObj = clone $this->db;
+        $total_filtered_select = $tempDbObj->get();
+        $total_filtered_items = array();
+        foreach ($total_filtered_select->result() as $row)
+        {
+            $total_filtered_items[] = (int) $row->id;
+        }
+
+        if($post['columns']!=='action')
+            $this->db->order_by($post['columns'][$post['order'][0]['column']]['name'], $post['order'][0]['dir']);
+        else {
+            $this->db->order_by('p.presentation_date', 'DESC');
+            $this->db->order_by('p.presentation_start', 'DESC');
+        }
+        // Filter for pagination and rows per page
+        if (isset($post['start']) && isset($post['length']))
+            $this->db->limit($post['length'], $post['start']);
+
+        $result = $this->db->get();
+
+        if ($result->num_rows() > 0)
+        {
+            foreach ($result->result() as $index=> $row){
+                $row->uploadStatus = $this->checkUploadStatus($row->id);
+                $row->index = $index+1;
+                $row->newUploads = $this->getUploadsCountDt($row->id);
+            }
+
+            $response_array = array(
+                "draw" => $post['draw'],
+                "recordsTotal" => $total_results,
+                "recordsFiltered" => $total_filtered_results,
+                "data" => $result->result(),
+                "total_filtered" => $total_filtered_items
+            );
+
+        } else {
+            $response_array = array(
+                "draw" => $post['draw'],
+                "recordsTotal" => 0,
+                "recordsFiltered" => 0,
+                "data" => new stdClass()
+            );
+
+        }
+        echo json_encode($response_array);
+    }
+
+
+    public function getLogs($presenter_id)
+    {
+        $logs = $this->db->select('log.*, icon.*, presenter.first_name, presenter.last_name, presentations.name, uploads.name file_name, uploads.file_path')
+            ->from('presenter_logs log')
+            ->join('presenter', 'log.presenter_id = presenter.presenter_id', 'left')
+            ->join('presentations', 'log.ref_presentation_id = presentations.id', 'left')
+            ->join('uploads', 'log.other_ref = uploads.id', 'left')
+            ->join('log_icons icon', 'log.log_name = icon.log_name', 'left')
+            ->where('log.presenter_id', $presenter_id)
+            ->order_by('log.date_time', 'DESC')
+            ->get();
+
+        if($logs->num_rows()>0){
+            echo json_encode($logs->result());
+        }else{
+            echo json_encode(array());
+        }
+    }
+
+    public function getPresentationListArray()
+    {
+
+        $this->db->select("p.*, s.name as session_name,s.id as session_id, pr.presenter_id, CONCAT(pr.first_name, ' ', pr.last_name) as presenter_name, pr.email as email, rm.name as room_name, rm.id as room_id");
+        $this->db->from('presentations p');
+        $this->db->join('sessions s', 's.id = p.session_id');
+        $this->db->join('presenter pr', 'pr.presenter_id = p.presenter_id');
+        $this->db->join('room rm', 'p.room_id = rm.id');
+        $this->db->order_by('p.created_on', 'DESC');
+        $result = $this->db->get();
+
+        if ($result->num_rows() > 0)
+        {
+            return $result->result();
+        } else {
+            return '';
         }
     }
 

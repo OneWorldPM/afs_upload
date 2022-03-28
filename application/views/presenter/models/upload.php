@@ -44,7 +44,7 @@
                     <div id="dropzone">
                         <!-- Form will be filled here dynamically by Dropzone -->
                     </div>
-                    <small style="color: red;">You may upload the following file types: Microsoft PowerPoint (.ppt, .pptx), Video Files (.mp4, .mp3, .mv4, .mpg)</small>
+                    <small style="color: red;">You may upload the following file types: Microsoft PowerPoint (.ppt, .pptx)</small>
                 </section>
 
                 <section class="mt-3" id="existingFilesSection">
@@ -152,7 +152,7 @@
     });
 
 
-    function showUploader(user_id, presentation_id, session_name, presentation_name, presentation_type, speaker_lname, session_id, room_id, room_name, presentation_date, presentation_start)
+    function showUploader(user_id, presentation_id, session_name, presentation_name, presentation_type, speaker_lname, session_id, room_id, room_name, presentation_date, presentation_start, assigned_id)
     {
 
         fillUploadedFiles(user_id, presentation_id, room_id);
@@ -183,9 +183,10 @@
         uploadDropzone = new Dropzone("#dropzone form",
             {
                 url: "<?=base_url('dashboard/uploadFile')?>",
-                acceptedFiles: ".ppt, .pptx, .mp4, .mp3, .mv4, .mpg, .pdf",
+                acceptedFiles: ".ppt, .pptx",
                 addRemoveLinks: false,
                 maxFilesize: 2000,
+                timeout: 3600000, //in Milli Seconds
                 init: function() {
                     this.on('error', function(file, errorMessage) {
                         var errorDisplay = document.querySelectorAll('[data-dz-errormessage]');
@@ -202,6 +203,7 @@
             formData.append('session_id', session_id);
             formData.append('room_id', room_id);
             formData.append('presentation_start', presentation_start);
+            formData.append('assigned_id', assigned_id);
         });
 
         uploadDropzone.on('success', function() {

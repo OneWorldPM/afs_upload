@@ -14,6 +14,12 @@
                 <form id="formPresentation" action="" method="post">
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
+                        <span class="input-group-text">Assigned ID</span>
+                    </div>
+                    <input name="assigned_id" id="assigned_id" type="text" class="form-control" aria-label="Assigned ID" required>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
                         <span class="input-group-text">Session Name</span>
                     </div>
                     <input name="session_name" id="session_name" type="text" class="form-control" aria-label="Session Name" required>
@@ -122,6 +128,7 @@
                       $('#presentation_start').val('');
                       $('#session_start').val('');
                       $('#session_end').val('');
+                      $('#assigned_id').val('');
                   }else{
                       Swal.fire(
                           'Failed',
@@ -182,6 +189,7 @@
                 $('#presentation_start').val(data.presentation_start);
                 $('#session_start').val(data.start_time);
                 $('#session_end').val(data.end_time);
+                $('#assigned_id').val(data.assigned_id);
             })
         })
     }

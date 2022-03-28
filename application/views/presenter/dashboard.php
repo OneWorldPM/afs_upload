@@ -1,7 +1,7 @@
-<title>Dashboard - AFS Congress Presentations</title>
+<title>Dashboard - AFS  Presentations</title>
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-    <a class="navbar-brand" href="#"><img src="<?=base_url('upload_system_files/vendor/images/afs_Icon.png')?>" width="40px"> AFS Congress Presentations </a>
+    <a class="navbar-brand" href="#"><img src="<?=base_url('upload_system_files/vendor/images/afs_Icon.png')?>" width="40px"> AFS  Presentations </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -44,7 +44,7 @@
         <div class="col-md-12">
             <h3><i class="fas fa-chalkboard-teacher"></i> Your Presentations</h3>
             <p>Your presentations are listed here; you can upload your files using the <!--<button id="example-upload-btn" class="btn btn-sm btn-info"><i class="fas fa-upload"></i> Upload</button>-->upload button.</p>
-            <p>You may upload the following file types:  Microsoft PowerPoint (.ppt, .pptx), Video Files (.mp4, .mp3, .mv4, .mpg)</p>
+            <p>You may upload the following file types:  Microsoft PowerPoint (.ppt, .pptx)</p>
 
             <div id="lastUpdatedAlert" class="alert alert-warning alert-dismissible fade show" role="alert" style="display:none;">
                 Presentations list was last loaded on <strong><span id="lastUpdated"></span></strong> by admin
@@ -60,11 +60,13 @@
                 <thead>
                 <tr>
                     <th>Status</th>
-                    <th>Presentation Date</th>
+                    <th>Assigned ID</th>
+                    <th>Session Date</th>
+                    <th>Session Time</th>
+                    <th>Presentation Start</th>
                     <th>Room</th>
                     <th>Session Name</th>
                     <th>Presentation Title</th>
-                    <th>Time</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -112,9 +114,10 @@
             let room_name = $(this).attr('room_name');
             let presentation_date = $(this).attr('presentation_date');
             let presentation_start = $(this).attr('presentation_start');
+            let assigned_id = $(this).attr('assigned-id');
 
 
-            showUploader(user_id, presentation_id, session_name, presentation_name, presentation_type, speaker_lname, session_id, room_id, room_name, presentation_date, presentation_start);
+            showUploader(user_id, presentation_id, session_name, presentation_name, presentation_type, speaker_lname, session_id, room_id, room_name, presentation_date, presentation_start, assigned_id);
         });
 
         $('#presentationTable').on('click', '.details-btn', function () {
@@ -130,8 +133,9 @@
             let room_name = $(this).attr('room_name');
             let presentation_date = $(this).attr('presentation_date');
             let presentation_start = $(this).attr('presentation_start');
+            let assigned_id = $(this).attr('assigned-id');
 
-            showUploader(user_id, presentation_id, session_name, presentation_name, presentation_type, speaker_lname, session_id, room_id, room_name, presentation_date, presentation_start);
+            showUploader(user_id, presentation_id, session_name, presentation_name, presentation_type, speaker_lname, session_id, room_id, room_name, presentation_date, presentation_start, assigned_id);
         });
 
 
@@ -154,24 +158,27 @@
 
 
                 let statusBadge = (presentation.uploadStatus)?'<span class="badge badge-success"><i class="fas fa-check-circle"></i> '+presentation.uploadStatus+' File(s) uploaded</span>':'<span class="badge badge-warning"><i class="fas fa-exclamation-circle"></i> No Uploads</span>';
-                let uploadBtn = '<button class="upload-btn btn btn-sm btn-info" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="<?=$this->session->userdata('user_id')?>" presentation-id="'+presentation.id+'"  session_id="'+presentation.session_id+'" speaker_lname="'+presentation.speaker_lname+'" room_name="'+presentation.room_name+'" room_id="'+presentation.room_id+'"  presentation_date="'+presentation.presentation_date+'" presentation_start="'+presentation.presentation_start+'"><i class="fas fa-upload"></i> Upload</button>';
-                let detailsBtn = '<button class="details-btn btn btn-sm btn-primary text-white" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="<?=$this->session->userdata('user_id')?>" presentation-id="'+presentation.id+'"  session_id="'+presentation.session_id+'" speaker_lname="'+presentation.speaker_lname+'" room_name="'+presentation.room_name+'" room_id="'+presentation.room_id+'" presentation_date="'+presentation.presentation_date+'" presentation_start="'+presentation.presentation_start+'"><i class="fas fa-info-circle"></i> Details</button>';
+                let uploadBtn = '<button class="upload-btn btn btn-sm btn-info" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="<?=$this->session->userdata('user_id')?>" presentation-id="'+presentation.id+'"  session_id="'+presentation.session_id+'" speaker_lname="'+presentation.speaker_lname+'" room_name="'+presentation.room_name+'" room_id="'+presentation.room_id+'"  presentation_date="'+presentation.presentation_date+'" presentation_start="'+presentation.presentation_start+'" assigned-id="'+presentation.assigned_id+'"><i class="fas fa-upload"></i> Upload</button>';
+                let detailsBtn = '<button class="details-btn btn btn-sm btn-primary text-white" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="<?=$this->session->userdata('user_id')?>" presentation-id="'+presentation.id+'"  session_id="'+presentation.session_id+'" speaker_lname="'+presentation.speaker_lname+'" room_name="'+presentation.room_name+'" room_id="'+presentation.room_id+'" presentation_date="'+presentation.presentation_date+'" presentation_start="'+presentation.presentation_start+'" assigned-id="'+presentation.assigned_id+'"><i class="fas fa-info-circle"></i> Details</button>';
 
 
                 var presentation_date = (presentation.presentation_date && presentation.presentation_date !=='0000-00-00')?presentation.presentation_date:"";
 
-               let time = (presentation.start_time !== null  && presentation.end_time !== null ) ? '<div class="badge badge-primary text-white" style="font-size:16px">'+presentation.start_time +'</div> - <div class="badge badge-primary text-white" style="font-size:16px">'+ presentation.end_time +'</div>':'';
+               let time = (presentation.start_time !== null  && presentation.end_time !== null ) ? presentation.start_time +' - '+ presentation.end_time :'';
+                let assigned_id = (presentation.assigned_id == '')?'':presentation.assigned_id;
 
                 $('#presentationTableBody').append('' +
                     '<tr>\n' +
                     '  <td>\n' +
                     '    '+statusBadge+'\n' +
                     '  </td>\n' +
+                    '  <td>'+assigned_id+'</td>\n' +
                     '  <td>'+presentation_date+'</td>\n' +
+                    '  <td style="white-space:nowrap">'+time+'</td>\n' +
+                    '  <td>'+presentation.presentation_start+'</td>\n' +
                     '  <td>'+presentation.room_name+'</td>\n' +
                     '  <td>'+presentation.session_name+'</td>\n' +
                     '  <td>'+presentation.name+'</td>\n' +
-                    '  <td style="white-space:nowrap">'+time+'</td>\n' +
                     '  <td>\n' +
                     '    '+uploadBtn+'\n' +
                     '    '+detailsBtn+'\n' +

@@ -122,13 +122,16 @@ class Dashboard extends CI_Controller
 
                 $file_path = 'upload_system_files/doc_upload/'.$user.'/'.$upload_file_name;
 
-                $new_name = str_replace(':','',$presentation_start).'_'.$post['speaker_lname'].'_'.$filename;
+                if($post['assigned_id'] !== '')
+                    $new_name = str_replace(':','',$presentation_start).'_'.preg_replace('/\s+/', '_',$post['assigned_id']).'_'.$post['speaker_lname'].'_'.$filename;
+                else
+                    $new_name = str_replace(':','',$presentation_start).'_'.$post['speaker_lname'].'_'.$filename;
 
                 if($this->check_upload_resubmission($presentation_id, $user, $new_name)){
                     $increment_name = $this->check_upload_resubmission($presentation_id, $user, $new_name);
                     $new_name= $increment_name.'.'.$extension;
                 }else{
-                    $new_name = str_replace(':','',$presentation_start).'_'.$post['speaker_lname'].'_'.$name;
+                    $new_name = str_replace(':','',$presentation_start).'_'.preg_replace('/\s+/', '_', $post['assigned_id']).'_'.$post['speaker_lname'].'_'.$name;
                 }
 
                 $upload = array(
@@ -341,7 +344,7 @@ class Dashboard extends CI_Controller
         );
         $this->load->library('email', $config);
 
-        $this->email->from('presentations@yourconference.live', 'AFS Presentations Submission');
+        $this->email->from('presentations@yourconference.live', 'AFS Submission');
         $this->email->to($email);
         //$this->email->cc('athullive@gmail.com');
         //$this->email->bcc('them@their-example.com');

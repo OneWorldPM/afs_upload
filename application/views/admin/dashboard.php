@@ -1,10 +1,11 @@
-<title>Admin - AFS Congress Presentations</title>
+<title>Admin - AFS  Presentations</title>
 
 <main role="main" style="margin-top: 70px;margin-left: 20px;margin-right: 20px;">
     <div class="row">
         <div class="col-md-12">
             <h3>Presentations</h3>
             <p>Loaded presentations are listed here</p>
+            <h6 class="text-info">Tip:  Click on multiple records to group select</h6><br>
 
             <div id="lastUpdatedAlert" class="alert alert-warning alert-dismissible fade show" role="alert" style="display:none;">
                 This list was last loaded on <strong><span id="lastUpdated"></span></strong>
@@ -14,22 +15,26 @@
             </div>
 
         </div>
-        <a href="<?=base_url().'admin/dashboard/presentationToCsv'?>" target="_blank" class="btn btn-primary float-left mb-2 ml-5 text-white" style="cursor: pointer"><i class="fas fa-file-csv"></i> Export CSV</a>
+        <a href="<?=base_url().'admin/dashboard/presentationToCsv'?>" target="_blank" class="btn btn-primary float-left mb-2 text-white" style="cursor: pointer"><i class="fas fa-file-csv"></i> Export CSV</a>
         <a href="#" target="_blank" class="btn btn-primary float-left mb-2 ml-5 text-white" style="cursor: pointer" id="downloadSelectedPresentation"><i class="fas fa-file-archive"></i> Zip & Download  Selected Presentation</a>
         <div class="col-md-12">
-            <button class="create-presentation-btn btn btn-success float-right"><i class="fas fa-plus"></i> Create</button>
+            <button class="create-presentation-btn btn btn-success float-right"><i class="fas fa-plus"></i> Create New</button>
+            <button class="select-all-presentation btn btn-info btn-sm mr-2 float-left"><i class="fas fa-check-double"></i> Select All Filtered</button>
             <table id="presentationTable" class="table table-striped table-bordered" style="width:100%">
                 <thead>
                 <tr>
-                    <th><input type="checkbox" name="check" id="checkAllPresentation">Select All</th>
+                    <!--                    <th>Select All</th>-->
+                    <!--                    <th><input type="checkbox" name="check" id="checkAllPresentation">Select All</th>-->
                     <th>Status</th>
                     <th>ID</th>
-                    <th style=" white-space: nowrap "> Session Time</th>
+                    <th>Assigned ID</th>
+                    <th style=" white-space: nowrap ">Session Date</th>
                     <th>Presentation Start</th>
                     <th>Room</th>
                     <th>Session Name</th>
                     <th>Presentation Title</th>
-                    <th>Presenter</th>
+                    <th>Presenter FirstName</th>
+                    <th>Presenter LastName</th>
                     <th>Email</th>
                     <th>Info</th>
                     <th>Actions</th>
@@ -40,6 +45,69 @@
                 <!-- Will be filled by JQuery AJAX -->
                 </tbody>
 
+                <tfoot>
+                <tr>
+                    <td>
+                        <select class="filter-status" >
+                            <option value=""></option>
+                            <?php if(isset($new_uploads) && !empty($new_uploads)):?>
+                                    <option value="new-uploads" presentation-ids="<?=$new_uploads?>">New Uploads</option>
+                            <?php else: ?>
+                                <option value="new-uploads" presentation-ids="">New Uploads</option>
+                            <?php endif; ?>
+                            <option value="active">Active</option>
+                            <option value="disabled">Disabled</option>
+                        </select>
+                    </td>
+                    <td></td>
+                    <td>
+                        <select class="filter-select" >
+                            <option value=""></option>
+                            <?php if(isset($assigned_ids) && !empty($assigned_ids)):?>
+                            <?php foreach ($assigned_ids as $assigned_id) :?>
+                                <option value="<?=($assigned_id)?>"><?=($assigned_id)?></option>
+                            <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="filter-select" >
+                            <option value=""></option>
+                            <?php if(isset($session_dates) && !empty($session_dates)):?>
+                            <?php foreach ($session_dates as $session_date) :?>
+                                <option value="<?=($session_date)?>"><?=($session_date)?></option>
+                            <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <select class="filter-select" style="max-width: 200px !important;" >
+                            <option value=""></option>
+                            <?php if(isset($session_names) && !empty($session_names)):?>
+                            <?php foreach ($session_names as $session_name) :?>
+                                <option value="<?=($session_name)?>"><?=($session_name)?></option>
+                            <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="filter-select" style="max-width: 200px !important;" >
+                            <option value=""></option>
+                            <?php if(isset($presentation_titles) && !empty($presentation_titles)):?>
+                            <?php foreach ($presentation_titles as $presentation_title) :?>
+                                <option value="<?=($presentation_title)?>"><?=($presentation_title)?></option>
+                            <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                </tfoot>
             </table>
         </div>
 
@@ -48,12 +116,39 @@
     <hr>
 </main>
 
+<div class="modal fade" id="logsModal" tabindex="-1" role="dialog" aria-labelledby="logsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="logsModalLabel">Logs (<span id="logPersonName"></span>)</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="height: 500px;overflow: scroll;">
+                <ul id="logsList" class="list-group">
+                    <!-- Will be filled by JS -->
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.datatables.net/1.10.23/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/select/1.3.4/js/dataTables.select.min.js" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap4.min.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdn.datatables.net/select/1.3.4/css/select.dataTables.min.css" crossorigin="anonymous" />
 
 
 <script>
+    let selected = [];
+    let allFiltered = [];
+    let isAllSelected = false;
+    let presentationDt;
     $(document).ready(function() {
 
         loadPresentations();
@@ -107,7 +202,39 @@
         });
 
         $('#presentationTable').on('click', '.presentation-logs-btn', function () {
-            toastr.warning("Under development");
+            toastr['info']('Please wait...');
+
+            let userId = $(this).attr('user-id');
+            $.get(`<?=base_url()?>admin/dashboard/getLogs/${userId}`, function (logs) {
+                logs=JSON.parse(logs);
+
+                if (logs.length == 0)
+                {
+                    toastr['warning']('No logs found');
+                    return false;
+                }
+
+                $('#logPersonName').text(logs[0].first_name+' '+logs[0].last_name);
+
+                $('#logsList').html('');
+                $.each(logs, function(i, log){
+
+                    let presentation_name = (log.ref_presentation_id != null)?`<br><span><small>Presentation: ${log.name}</small></span>`:'';
+                    let file = (log.other_ref != null)?`<br><span><small>File: <a href="<?=base_url()?>admin/dashboard/openFile/${log.other_ref}">${log.file_name}</a></small></span>`:'';
+
+                    $('#logsList').append('' +
+                        `<li class="list-group-item">
+                                <i style="color: ${log.color}" class="${log.icon}"></i>
+                                ${log.log_name}
+                                <small class="float-right">${log.date_time}</small>
+                                ${presentation_name}
+                                ${file}
+                             </li>`);
+                });
+
+                $('body').find('#toast-container').remove();
+                $('#logsModal').modal('show');
+            });
         });
 
         $('#presentationTable').on('click', '.edit-presentation-btn', function () {
@@ -124,24 +251,36 @@
         });
 
 
-        $('#checkAllPresentation').prop('checked', false);
-        $('#checkAllPresentation').on('click', function(){
-            $('input:checkbox').not(this).prop('checked', this.checked);
+        $('.select-all-presentation').on('click', function(){
+            if (isAllSelected == false && selected.length == 0)
+            {
+                selected = allFiltered;
+                presentationDt.rows().every(function() {
+                    this.nodes().to$().addClass('selected');
+                });
+
+                $(this).removeClass('btn-info');
+                $(this).addClass('btn-danger');
+                $(this).html('<i class="fas fa-ban"></i> Unselect All');
+                isAllSelected = true;
+            }else{
+                selected = [];
+                presentationDt.rows().every(function() {
+                    this.nodes().to$().removeClass('selected');
+                });
+
+                $(this).removeClass('btn-danger');
+                $(this).addClass('btn-info');
+                $(this).html('<i class="fas fa-check-double"></i> Select All Filtered');
+                isAllSelected = false;
+            }
         });
 
         $('#downloadSelectedPresentation').on('click', function(e){
             e.preventDefault();
             toastr['info']('please wait...')
-            var checkedPresentationIds = [];
-            var $this = $('.checkedPresentation');
-            $('.checkedPresentation:checked').each(function(){
 
-                if($('.checkedPresentation').is(':checked')){
-                    checkedPresentationIds.push($(this).attr('presentation-id'));
-                }
-            })
-            console.log(checkedPresentationIds);
-            checkedPresentationIds = checkedPresentationIds.join('-')
+            checkedPresentationIds = selected.join('-')
 
 
             $.post('<?=base_url()?>admin/dashboard/download_checked_presentation_zip/',
@@ -153,12 +292,13 @@
 
                  if(response.status === 'success'){
                      toastr.clear();
-                     Swal.fire(
-                         'Done!',
-                         `<a href="<?=base_url()?>${response.file_name}"><h3> Click here to Download File! <i class="fas fa-download"></i></h3></a>
+                     Swal.fire({
+                         title: 'Done!',
+                         html:`<a href="<?=base_url()?>${response.file_name}" download><h3> Click here to Download Files <i class="fas fa-download"></i></h3></a>
                          <br><small class="text-danger">Downloading zip files will not affect undownloaded file status</small>`,
-                         'success'
-                     )
+                         icon: 'success',
+                         confirmButtonText: 'Close'
+                 })
                  }else{
                      toastr.clear();
                      toastr['error'](response.msg);
@@ -166,12 +306,194 @@
 
             })
         })
+        $('.clear-filter').on('click', function(e){
+            e.preventDefault()
+            let index = $(this).attr('input-index');
+            $('#presentationTable .filter_'+index).val('');
+            $('#presentationTable .filter-select_'+index).val('');
+            $('.filter_'+index).change();
+        })
+
+        $('.filter-select').val('');
+        $('.filter-status').val('');
+
+        $('.filter-select').on('change', function(){
+            let index = $(this).parent().attr('input-index');
+            $('#presentationTable .filter_'+index).val($(this).val());
+            $('.filter_'+index).change();
+        })
+
+        $('.filter-status').on('change', function(){
+
+            let presentationsWithNewUploads = $('option:selected', this).attr('presentation-ids');
+            console.log(  presentationDt.column($(this).data('column')));
+            if($(this).val() == 'new-uploads') {
+                presentationDt.column($(this).data('column'))
+                    .search(presentationsWithNewUploads)
+                    .draw();
+            }
+            else {
+                presentationDt.column($(this).data('column'))
+                    .search($(this).val())
+                    .draw();
+            }
+        })
 
     } );
 
-
-
     function loadPresentations() {
+
+        $('#presentationTable thead th').each(function(i) {
+            let $this = $(this).text();
+
+            if (!($this == 'Actions' || $this== 'Status' || $this== 'Select All' || $this== 'Info' || $this== 'ID'))
+                $(this).html($(this).text()+'<br><input class="filter_'+i+'" type="text" placeholder="Search '+$(this).text()+'" style="width: inherit;background: white;color: black;border: 1px solid #666;"/><br><input type="button" value="Clear" class="clear-filter btn btn-sm btn-warning" style="width: 80%; height: 20px; padding-top: 0" id="clear-filter" input-index="'+i+'"/>');
+            // <br><input type="button" value="Clear" class="clear-filter btn btn-sm btn-warning" style="width: 80%; height: 20px; padding-top: 0"/>
+            // <button class="clear-filter badge badge-warning badge-sm mr-2 float-left " style="width: 100%;" id="clear-filter" input-index="'+i+'"><i class="fas fa-eraser"></i> Clear</button>
+        });
+        $('#presentationTable tfoot td').each(function(i) {
+            let $this = $(this).text();
+
+            if (!($this == 'Actions' || $this== 'Status' || $this== 'Select All' || $this== 'Info' || $this== 'ID'))
+                $(this).attr('input-index', i);
+                $(this).find('select').addClass('filter-select_'+i)
+        });
+
+        if ( $.fn.DataTable.isDataTable('#presentationTable') ) {
+            $('#presentationTable').DataTable().destroy();
+
+            selectPresentationRow();
+        }
+
+        let presentation_ids = [];
+        presentationDt = $('#presentationTable')
+            .DataTable(
+                {
+                    "dom": "<'row'<'col-sm-12 col-md-8'l><'#logsTableBtns.col-sm-12 col-md-4 text-right'B>>" +
+                        "<'row'<'col-sm-12'tr>>" +
+                        "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                    "serverSide": true,
+                    "processing": true,
+                    lengthMenu: [5, 10, 20, 50, 100, 200],
+                    "iDisplayLength": 200,
+                    "ajax":
+                        {
+                            "url": "<?=base_url()?>admin/dashboard/getPresentationsDt",
+                            "type": "POST"
+                        },
+
+                    "columns":
+                        [
+
+                            { "name": "new-uploads", "data": null, render: function(presentation, type, row, meta) {
+                                    getUndownloadedData(presentation.id, presentation.uploadStatus);
+
+                                    let statusBadge = (presentation.uploadStatus)?'<span class="badge badge-success mr-1"><i class="fas fa-check-circle"></i> '+presentation.uploadStatus+' File(s) uploaded</span>':'<span class="badge badge-warning mr-1"><i class="fas fa-exclamation-circle"></i> No Uploads</span>';
+                                    statusBadge += (presentation.active==1)?'<span class="active-status badge badge-success" presentation-id="'+presentation.id+'"><i class="fas fa-check"></i> Active</span>':'<span class="disabled-status badge badge-danger" presentation-id="'+presentation.id+'"><i class="fas fa-times"></i> Disabled</span>';
+                                    statusBadge += '<span  id="undownloadedFileCount_'+presentation.id+'" style="display: none; margin-top:4px; "></span>';
+
+                                    return  statusBadge;
+                                }
+                            },
+
+                            { "name": "p.id", "data": "id"},
+                            { "name": "p.assigned_id", "data": "assigned_id"},
+                            { "name": "p.presentation_date", "data": "presentation_date", "width": "105px" },
+                            { "name": "p.presentation_start", "data": "presentation_start" },
+                            { "name": "rm.name", "data": "room_name" },
+                            { "name": "s.name", "data": "session_name" },
+                            { "name": "p.name", "data": "name" },
+                            { "name": "pr.first_name", "data": "first_name" },
+                            { "name": "pr.last_name", "data": "last_name" },
+                            { "name": "pr.email", "data": "email" },
+                            { "action": "action", "data": null, render: function(presentation, type, row, meta) {
+                                    let filesBtn = '<button class="files-btn btn btn-sm btn-info text-white" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="'+presentation.presenter_id+'" presentation-id="'+presentation.id+'" room_id="'+presentation.room_id+'" room_name="'+presentation.room_name+'" presentation_date="'+presentation.presentation_date+'"><i class="fas fa-folder-open"></i> Files</button>';
+                                    let logsBtn = '<button class="presentation-logs-btn btn btn-sm btn-warning text-white mt-1" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="'+presentation.presenter_id+'" presentation-id="'+presentation.id+'" room_name="'+presentation.room_name+'" presentation_date="'+presentation.presentation_date+'"><i class="fas fa-history"></i> Logs</button>';
+
+                                    return filesBtn+' '+logsBtn;
+                                }
+                            },
+                            { "action": "action", "data": null, render: function(presentation, type, row, meta) {
+                                    let editBtn = '<button class="edit-presentation-btn btn btn-sm btn-primary text-white" presentation-id="'+presentation.id+'"   user-id="'+presentation.presenter_id+'"  room_id="'+presentation.room_id+'" upload-status="'+presentation.uploadStatus+'"><i class="fas fa-edit"></i> Edit</button>';
+                                    let disableBtn = (presentation.active==0)?'<button class="activate-presentation-btn btn btn-sm btn-success text-white mt-1" presentation-id="'+presentation.id+'"><i class="fas fa-check"></i> Activate</button>':'<button class="disable-presentation-btn btn btn-sm btn-danger text-white mt-1" presentation-id="'+presentation.id+'"><i class="fas fa-times"></i> Disable</button>';
+
+                                    return editBtn+' '+disableBtn;
+                                }
+                            },
+
+                        ],
+                    "paging": true,
+                    "lengthChange": true,
+                    "searching": true,
+                    "ordering": true,
+                    "info": true,
+                    "autoWidth": false,
+                    "responsive": false,
+                    "createdRow": function(row, data, dataIndex){
+                        $(row).attr('id', data.id);
+                    },
+                    "rowCallback": function( row, data ) {
+                        if (selected.includes(parseInt(data.id))) {
+                            $(row).addClass('selected');
+                        }
+                    },
+                    "order": [[ 3, "ASC" ]],
+
+
+                    initComplete: function(settings, json) {
+                        var api = this.api();
+                        // Apply the search
+                        arr = ['2','3','4','5','6','7','8','9','10'];
+                        api.columns(arr).every(function() {
+                            var that = this;
+                            $('input', this.header()).on('keyup change', function() {
+                                if (that.search() !== this.value) {
+                                    that.search(this.value).draw();
+                                }
+                            });
+                        });
+                        $('[data-toggle="tooltip"]').tooltip();
+                    },
+                    "drawCallback": function(settings) {
+                        allFiltered = this.api().ajax.json().total_filtered;
+                    }
+
+                });
+        selectPresentationRow();
+
+    }
+
+
+    function selectPresentationRow(){
+        $('#presentationTable tbody').on('click', 'tr', function () {
+            var id = parseInt(this.id);
+            var index = $.inArray(id, selected);
+
+            if ( index === -1 ) {
+                selected.push( id );
+            } else {
+                selected.splice( index, 1 );
+            }
+
+            $(this).toggleClass('selected');
+
+            if(selected.length > 0)
+            {
+                $('.select-all-presentation').removeClass('btn-info');
+                $('.select-all-presentation').addClass('btn-danger');
+                $('.select-all-presentation').html('<i class="fas fa-ban"></i> Unselect All');
+            }else{
+                $('.select-all-presentation').removeClass('btn-danger');
+                $('.select-all-presentation').addClass('btn-info');
+                $('.select-all-presentation').html('<i class="fas fa-check-double"></i> Select All');
+            }
+        } );
+    }
+
+
+
+
+    function loadPresentations2() {
         $.get( "<?=base_url('admin/dashboard/getPresentationList')?>", function(response) {
             response = JSON.parse(response);
 
@@ -190,7 +512,7 @@
                 statusBadge += '<span  id="undownloadedFileCount_'+presentation.id+'" style="display: none; margin-top:4px; "></span>'
 
                 let filesBtn = '<button class="files-btn btn btn-sm btn-info text-white" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="'+presentation.presenter_id+'" presentation-id="'+presentation.id+'" room_id="'+presentation.room_id+'" room_name="'+presentation.room_name+'" presentation_date="'+presentation.presentation_date+'"><i class="fas fa-folder-open"></i> Files</button>';
-                let logsBtn = '<button class="presentation-logs-btn btn btn-sm btn-warning text-white mt-1" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="<?=$this->session->userdata('user_id')?>" presentation-id="'+presentation.id+'" room_name="'+presentation.room_name+'" presentation_date="'+presentation.presentation_date+'"><i class="fas fa-history"></i> Logs</button>';
+                let logsBtn = '<button class="presentation-logs-btn btn btn-sm btn-warning text-white mt-1" session-name="'+presentation.session_name+'" presentation-name="'+presentation.name+'" user-id="'+presentation.presenter_id+'" presentation-id="'+presentation.id+'" room_name="'+presentation.room_name+'" presentation_date="'+presentation.presentation_date+'"><i class="fas fa-history"></i> Logs</button>';
 
                 let editBtn = '<button class="edit-presentation-btn btn btn-sm btn-primary text-white" presentation-id="'+presentation.id+'"   user-id="'+presentation.presenter_id+'"  room_id="'+presentation.room_id+'" upload-status="'+presentation.uploadStatus+'"><i class="fas fa-edit"></i> Edit</button>';
                 let disableBtn = (presentation.active==0)?'<button class="activate-presentation-btn btn btn-sm btn-success text-white mt-1" presentation-id="'+presentation.id+'"><i class="fas fa-check"></i> Activate</button>':'<button class="disable-presentation-btn btn btn-sm btn-danger text-white mt-1" presentation-id="'+presentation.id+'"><i class="fas fa-times"></i> Disable</button>';
@@ -255,15 +577,15 @@
         $.get( "<?=base_url('admin/dashboard/getUploadsCount/')?>"+presentation, function(response) {
             // console.log(response);
             if(response.upload_count == response.undownloaded){
-               $('#undownloadedFileCount_'+presentation).html('<i class="fas fa-bell" style="color: red"></i> Undownloaded File(s)'+response.upload_count);
+               $('#undownloadedFileCount_'+presentation).html('<i class="fas fa-bell" style="color: red"></i>'+ response.upload_count+' New File(s)');
                $('#undownloadedFileCount_'+presentation).css('display', 'block');
                $('#undownloadedFileCount_'+presentation).attr('class', 'badge badge-warning');
             }else if(response.undownloaded >0){
-                $('#undownloadedFileCount_'+presentation).html('<i class="fas fa-bell" style="color: red"></i> Undownloaded File(s)'+response.undownloaded);
+                $('#undownloadedFileCount_'+presentation).html('<i class="fas fa-bell" style="color: red"></i> '+ response.upload_count+' New File(s)');
                 $('#undownloadedFileCount_'+presentation).css('display', 'block');
                 $('#undownloadedFileCount_'+presentation).attr('class', 'badge badge-warning');
             }else{
-                $('#undownloadedFileCount_'+presentation).html('<i class="fas fa-check" style="color: white"></i> All files downloaded');
+                $('#undownloadedFileCount_'+presentation).html('<i class="fas fa-check" style="color: white"></i>'+ response.upload_count+' New File(s)');
                 $('#undownloadedFileCount_'+presentation).css('display', 'block');
                 $('#undownloadedFileCount_'+presentation).attr('class', 'badge badge-success');
             }
