@@ -424,7 +424,7 @@
             }
 
             $(this).toggleClass('selected');
-
+            console.log(selected.length);
             if(selected.length > 0)
             {
                 $('.select-all-presentation').removeClass('btn-info');
@@ -479,7 +479,7 @@
                 }
 
                 $('#presentationTableBody').append('' +
-                    '<tr>\n' +
+                    '<tr id="'+presentation.id+'">\n' +
                     '  <td>\n' +
                     '    '+statusBadge+'\n' +
                     '  </td>\n' +
