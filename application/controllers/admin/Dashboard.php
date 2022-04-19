@@ -521,11 +521,11 @@ class Dashboard extends CI_Controller
 //    }
 
     public function presentationToCsv(){
-        $this->db->select('p.id,CONCAT(pr.first_name ," ", pr.last_name) as PresenterName, pr.email as email, l.name as LabelName, s.name as Category, p.name as PresentationName')
+        $this->db->select('p.id, p.assigned_id, p.presentation_date, p.start_time, p.end_time, p.presentation_start, r.name as room_name, s.name as session_name, s.full_name,  p.name, pr.first_name, pr.last_name, pr.email')
             ->from('presentations p ')
-            ->join('upload_label l', 'p.label=l.id', 'left')
             ->join('sessions s', 'p.session_id = s.id', 'left')
             ->join('presenter pr', 'p.presenter_id = pr.presenter_id', 'left')
+            ->join('room r', 'p.room_id = r.id', 'left')
         ;
         $result = $this->db->get();
 
@@ -537,7 +537,7 @@ class Dashboard extends CI_Controller
             header("Content-Type: application/csv;");
 
             $file = fopen('php://output', 'w');
-            $header = array("id", "Presenter", "Email", "Label", "Category", "Presentation Title", "Status");
+            $header = array("id", "AssignedID", "Presentation Date", "Session Start", "Session End", "Presentation Start", "Room", "Session Name", "Session Full Name", "Presentation Title", "FirstName", "LastName", "Email", "Status");
             fputcsv($file, $header);
             $data_array= array();
             foreach($result->result_array() as $data){
