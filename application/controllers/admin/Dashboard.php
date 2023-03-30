@@ -741,7 +741,7 @@ class Dashboard extends CI_Controller
         $result = $this->db->select('*')
             ->from('download_status')
             ->where('uploads_id', $file_id)
-            ->where('admin_id', $_SESSION['admin_id'])
+            ->where('admin_id', $_SESSION['user_id'])
             ->get();
 
         if(!$result->num_rows()>0){
