@@ -95,7 +95,7 @@
                         data = JSON.parse(data);
                         if (data.status == 'success')
                         {
-                            emailConfText = '<br><br><span class="badge badge-info"><i class="fas fa-envelope-open-text"></i> A confirmation email has been sent to you!</span>';
+                            emailConfText = '<br><br><span class="badge badge-info"><i class="fas fa-envelope-open-text"></i> Thank you for your submission</span>';
 
                             Swal.fire(
                                 'Done!',
