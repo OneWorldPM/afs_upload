@@ -314,9 +314,9 @@ class Dashboard extends CI_Controller
     {
         $post = $this->input->post();
 
-        $this->load->config('email', TRUE);
+        $this->load->config('email_config', TRUE);
 
-        if (!$this->config->item('smtp_user', 'email'))
+        if (!$this->config->item('smtp_user', 'email_config'))
         {
             $response = array(
                 'status' => 'failed',
@@ -334,16 +334,18 @@ class Dashboard extends CI_Controller
         $deletedFiles = $post['deletedFiles'];
 
         $config = Array(
-            'protocol' => $this->config->item('protocol', 'email'),
-            'smtp_host' => $this->config->item('smtp_host', 'email'),
-            'smtp_port' => $this->config->item('smtp_port', 'email'),
-            'smtp_user' => $this->config->item('smtp_user', 'email'),
-            'smtp_pass' => $this->config->item('smtp_pass', 'email'),
-            'mailtype'  => $this->config->item('mailtype', 'email'),
-            'charset'   => $this->config->item('charset', 'email')
+            'protocol' => $this->config->item('email_protocol', 'email_config'),
+            'smtp_host' => $this->config->item('smtp_host', 'email_config'),
+            'smtp_port' => $this->config->item('smtp_port', 'email_config'),
+            'smtp_user' => $this->config->item('smtp_user', 'email_config'),
+            'smtp_pass' => $this->config->item('smtp_pass', 'email_config'),
+            'mailtype'  => $this->config->item('mailtype', 'email_config'),
+            'charset'   => $this->config->item('charset', 'email_config'),
+            'smtp_crypto'=>'ssl'
         );
-        $this->load->library('email', $config);
 
+        $this->load->library('email', $config);
+        $this->email->initialize($config);
         $this->email->from('presentations@yourconference.live', 'AFS Submission');
         $this->email->to($email);
         //$this->email->cc('athullive@gmail.com');
@@ -377,4 +379,49 @@ class Dashboard extends CI_Controller
         return;
     }
 
+    public function sendEmailTest(){
+
+
+     $this->load->config('email_config', TRUE);
+
+        if (!$this->config->item('smtp_user', 'email_config'))
+        {
+            $response = array(
+                'status' => 'failed',
+                'msg' => "Send email option is not configured, please contact developer or system administrator."
+            );
+
+            echo json_encode($response);
+
+            return;
+        }
+
+
+        $config = Array(
+            'protocol' => $this->config->item('email_protocol', 'email_config'),
+            'smtp_host' => $this->config->item('smtp_host', 'email_config'),
+            'smtp_port' => $this->config->item('smtp_port', 'email_config'),
+            'smtp_user' => $this->config->item('smtp_user', 'email_config'),
+            'smtp_pass' => $this->config->item('smtp_pass', 'email_config'),
+            'mailtype'  => $this->config->item('mailtype', 'email_config'),
+            'charset'   => $this->config->item('charset', 'email_config'),
+            'smtp_crypto'=>'ssl'
+        );
+
+       
+        $this->load->library('email');
+        $this->email->initialize($config);
+        $this->email->set_newline("\r\n");
+
+        $this->email->from('no-reply@yourconference.live', 'Your Name');
+        $this->email->to('rexterdayuta@gmail.com');
+        $this->email->subject('Email Subject');
+        $this->email->message('Email Message');
+
+        if ($this->email->send()) {
+            echo 'Email sent successfully.';
+        } else {
+            echo $this->email->print_debugger();
+        }
+    }
 }
