@@ -511,7 +511,7 @@
                 initComplete: function() {
                     $('#presentationTable_filter').find('input').attr('autocomplete', 'off');
                     $('#presentationTable_filter').find('input').attr('type', 'text');
-                    $('#presentationTable_filter').find('input').val('upload');
+                    // $('#presentationTable_filter').find('input').val('upload');
                     //$(this.api().table().container()).find('input').val('');
                 },
 
