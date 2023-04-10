@@ -509,8 +509,18 @@
                     lengthMenu: [[5, 25, 50, 250, -1], [5, 25, 50, 250, "All"]],
                     "iDisplayLength": -1,
                 initComplete: function() {
-                    $('#presentationTable_filter').find('input').attr('autocomplete', 'off');
-                    $('#presentationTable_filter').find('input').attr('type', 'text');
+                   // Get the search box input element
+                    var searchInput = $('div.dataTables_filter input');
+
+                    // Generate a random name for the search input
+                    var randomName = "search_" + Math.random().toString(36).substring(2);
+
+                    // Set the name and autocomplete attributes of the search input
+                    searchInput.attr('name', randomName).attr('type', 'password');
+                    
+                    searchInput.on('click', function(){
+                        searchInput.attr('name', randomName).attr('type', 'text');
+                    })
                     // $('#presentationTable_filter').find('input').val('upload');
                     //$(this.api().table().container()).find('input').val('');
                 },
