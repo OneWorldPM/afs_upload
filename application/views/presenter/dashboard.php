@@ -1,7 +1,7 @@
-<title>Dashboard - AFS  Presentations</title>
+<title>Dashboard - LSRS  Presentations</title>
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-    <a class="navbar-brand" href="#"><img src="<?=base_url('upload_system_files/vendor/images/afs_Icon.png')?>" width="40px"> AFS  Presentations </a>
+    <a class="navbar-brand" href="#"><img src="<?=base_url('upload_system_files/vendor/images/LSRS_small_logo.jpg')?>" width="40px"> LSRS  Presentations </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>

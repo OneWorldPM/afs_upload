@@ -16,7 +16,7 @@
     <!-- Style -->
     <link rel="stylesheet" href="<?=base_url('upload_system_files/vendor/')?>css/style.css">
 
-    <link rel="icon" href="<?=base_url('upload_system_files/vendor/')?>images/afs_Icon.png">
+    <link rel="icon" href="<?=base_url('upload_system_files/vendor/')?>images/LSRS_small_logo.jpg">
 
 
     <!-- JS -->
@@ -34,7 +34,7 @@
 <body>
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-    <a class="navbar-brand" href="#"><img src="<?=base_url('upload_system_files/vendor/images/afs_Icon.png')?>" width="40px"> AFS | Admin Panel</a>
+    <a class="navbar-brand" href="#"><img src="<?=base_url('upload_system_files/vendor/images/LSRS_small_logo.jpg')?>" width="40px"> LSRS | Admin Panel</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
