@@ -1,4 +1,4 @@
-<title>AFS  Presentations</title>
+<title>LSRS  Presentations</title>
 <div class="content">
     <div class="container">
         <div class="row">
@@ -9,7 +9,7 @@
                 <div class="row justify-content-center">
                     <div class="col-md-8">
                         <div class="mb-4">
-                            <h4>AFS Presentations</h4>
+                            <h4>LSRS Presentations</h4>
                             <h5><strong>Admin Panel</strong></h5>
                         </div>
                         <form action="#" method="post">

@@ -1,21 +1,21 @@
-<title>AFS Presentations</title>
+<title>LSRS Presentations</title>
 
 <div class="content" style="padding: unset;">
     <div class="container">
         <div class="jumbotron" style="padding: unset;">
-            <img class="" src="<?=base_url().'./upload_system_files/vendor/images/AFS_Upload_Banner.png'?>" alt="banner" style="width:100%;">
+            <img class="" src="<?=base_url().'./upload_system_files/vendor/images/LSRS_banner.jpg'?>" alt="banner" style="width:100%;">
         </div>
 
         <div class="row pt-5">
             <div class="col-md-6 order-md-2">
-                <img src="<?=base_url('upload_system_files/vendor/')?>images/afs_Icon.png" style="width: 80%" alt="Folder image" class="img-fluid">
+                <img src="<?=base_url('upload_system_files/vendor/')?>images/LSRS_side.jpg" style="width: 80%" alt="Folder image" class="img-fluid">
             </div>
             <div class="col-md-6 contents">
                 <div class="row justify-content-center">
                     <div class="col-md-8">
                         <div class="mb-4">
                             <h3>Sign in to the</h3>
-                            <h4><strong>AFS Presentations</strong></h4>
+                            <h4><strong>LSRS Presentations</strong></h4>
                             <p class="mb-4">Username is your registered email and default password is your first name (password is case sensitive)</p>
                         </div>
                         <form action="#" method="post">

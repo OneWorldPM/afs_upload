@@ -1,4 +1,4 @@
-<title>Admin - AFS  Presentations</title>
+<title>Admin - LSRS  Presentations</title>
 
 <main role="main" style="margin-top: 70px;margin-left: 20px;margin-right: 20px;">
     <div class="row">

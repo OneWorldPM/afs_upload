@@ -16,7 +16,7 @@
     <!-- Style -->
     <link rel="stylesheet" href="<?=base_url('upload_system_files/vendor/')?>css/style.css">
 
-    <link rel="icon" href="<?=base_url('upload_system_files/vendor/')?>images/afs_Icon.png">
+    <link rel="icon" href="<?=base_url('upload_system_files/vendor/')?>images/LSRS_small_logo.jpg">
 
 
     <!-- JS -->
